@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kontak - Perpustakaan Kita</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">PerpusKita</a>
+            <nav class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="tentang.html">Tentang</a>
+                <a href="berita.html">Berita</a>
+                <a href="galeri.html">Galeri</a>
+                <a href="kontak.html" class="active">Kontak</a>
+            </nav>
+            <div class="menu-toggle">
+                <button id="theme-toggle" class="theme-button">🌙</button>
+                <button class="hamburger" id="hamburger-menu">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="container page-section">
+            <h1 class="page-title">Hubungi Kami</h1>
+            
+            <div class="contact-layout">
+                <div class="contact-info">
+                    <h3>Informasi Kontak</h3>
+                    <p>Jangan ragu untuk mengunjungi atau menghubungi kami.</p>
+                    <ul>
+                        <li><strong>Alamat:</strong><br> Jl. Pengetahuan No. 123, Kota Ilmu, Indonesia</li>
+                        <li><strong>Telepon:</strong><br> (021) 123-4567</li>
+                        <li><strong>Email:</strong><br> info@perpuskita.com</li>
+                    </ul>
+                    <h3>Jam Operasional</h3>
+                    <ul>
+                        <li>Senin - Jumat: 08:00 - 17:00</li>
+                        <li>Sabtu: 09:00 - 15:00</li>
+                        <li>Minggu: Tutup</li>
+                    </ul>
+                </div>
+                
+                <div class="contact-form">
+                    <h3>Kirim Pesan</h3>
+                    <form id="form-kontak">
+                        <div class="form-group">
+                            <label for="nama">Nama Anda</label>
+                            <input type="text" id="nama" name="nama" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email Anda</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="pesan">Pesan Anda</label>
+                            <textarea id="pesan" name="pesan" rows="6" required></textarea>
+                        </div>
+                        <button type="submit" class="cta-button">Kirim Pesan</button>
+                    </form>
+                </div>
+            </div>
+            
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Perpustakaan Kita. Dibuat dengan ❤️.</p>
+        </div>
+    </footer>
+
+    <script src="../assets/js/main.js"></script>
+</body>
+</html>
