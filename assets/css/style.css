@@ -197,7 +197,7 @@ main {
 
 /* == Hero (Homepage) == */
 .hero {
-    background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://via.placeholder.com/1500x700/666666/ffffff?text=Perpustakaan+Modern');
+    background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('../picture/1.jpg');
     background-size: cover;
     background-position: center;
     min-height: 60vh;
@@ -205,11 +205,13 @@ main {
     align-items: center;
     color: #ffffff;
     text-align: center;
-    animation: fadeIn 1s ease-out; /* Animasi khusus hero */
+    animation: fadeIn 1s ease-out;
 }
 
-.hero-content {
-    max-width: 700px;
+.hero-content p {
+  min-height: 2.2em; /* ruang cukup buat satu baris teks */
+  display: block; /* biar tombol tetap di bawah */
+  text-align: center;
 }
 
 .hero h1 {
