@@ -1,7 +1,6 @@
-// Menunggu sampai semua konten HTML dimuat
 document.addEventListener("DOMContentLoaded", function() {
 
-    // === 1. FUNGSI MOBILE MENU (HAMBURGER) ===
+    // === 1. HAMBURGER MENU ===
     const hamburgerMenu = document.getElementById('hamburger-menu');
     const navLinks = document.querySelector('.nav-links');
 
@@ -12,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // === 2. FUNGSI LIGHT/DARK MODE ===
+    // === 2. LIGHT/DARK MODE ===
     const themeToggle = document.getElementById('theme-toggle');
     const body = document.body;
 
@@ -37,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // === 3. ANIMASI KETIKAN (TYPEWRITER) HERO ===
+    // === 3. TYPEWRITER HERO ===
     const textElement = document.querySelector('.hero-content p');
     if (textElement) {
         const messages = [
@@ -77,6 +76,34 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         type();
+    }
+
+    // === 4. HERO BACKGROUND FADE ===
+    const hero = document.querySelector('.hero');
+    if (hero) {
+        const backgrounds = [
+            "assets/picture/2.jpg",
+            "assets/picture/1.jpg",
+        ];
+
+        // buat div untuk background
+        backgrounds.forEach((bg, i) => {
+            const div = document.createElement('div');
+            div.classList.add('hero-bg');
+            div.style.backgroundImage = `url(${bg})`;
+            div.style.opacity = i === 0 ? 1 : 0;
+            hero.appendChild(div);
+        });
+
+        const bgDivs = document.querySelectorAll('.hero-bg');
+        let current = 0;
+
+        setInterval(() => {
+            const next = (current + 1) % bgDivs.length;
+            bgDivs[current].style.opacity = 0;
+            bgDivs[next].style.opacity = 1;
+            current = next;
+        }, 5000);
     }
 
 });
