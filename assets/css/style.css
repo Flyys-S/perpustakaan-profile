@@ -426,3 +426,61 @@ main {
     from { opacity: 0; transform: translateY(-10px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
+/* == Footer Baru == */
+.footer-grid {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.footer-info h3 {
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.footer-info p {
+    margin-bottom: 0.3rem;
+    color: var(--text-muted);
+}
+
+.footer-social h4 {
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+}
+
+.social-links {
+    display: flex;
+    gap: 1rem;
+}
+
+.social-links a img {
+    width: 28px;
+    height: 28px;
+    filter: invert(40%) sepia(20%) saturate(500%) hue-rotate(180deg);
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.social-links a:hover img {
+    transform: scale(1.15);
+    filter: invert(20%) sepia(90%) saturate(2000%) hue-rotate(180deg);
+}
+
+.footer-bottom {
+    margin-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+    padding-top: 1rem;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .footer-grid {
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+    }
+}
