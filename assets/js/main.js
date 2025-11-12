@@ -105,5 +105,79 @@ document.addEventListener("DOMContentLoaded", function() {
             current = next;
         }, 5000);
     }
+    
+    // =======================================================
+    // === 5. FORM SUBMISSION HANDLING (AJAX/FETCH & SQL) ===
+    // =======================================================
 
-});
+    /**
+     * Menampilkan pesan notifikasi di form
+     * @param {HTMLElement} notifElement - Elemen div notifikasi
+     * @param {string} message - Isi pesan
+     * @param {string} type - Tipe pesan ('success' atau 'error')
+     * @param {HTMLElement} formToReset - Form yang akan direset (opsional)
+     */
+    function showNotification(notifElement, message, type, formToReset) {
+        notifElement.textContent = message;
+        notifElement.className = `form-notif ${type}`;
+        notifElement.style.display = "block";
+
+        if (type === 'success' && formToReset) {
+            formToReset.reset();
+        }
+
+        // Sembunyikan notifikasi setelah 5 detik
+        setTimeout(() => { 
+            notifElement.style.display = "none"; 
+        }, 5000);
+    }
+
+    /**
+     * Menangani pengiriman form melalui Fetch API (AJAX)
+     * @param {HTMLElement} formElement - Elemen form
+     * @param {HTMLElement} notifElement - Elemen div notifikasi
+     */
+    function handleFormSubmission(formElement, notifElement) {
+        if (formElement) {
+            formElement.addEventListener('submit', function(e) {
+                e.preventDefault(); 
+
+                const formData = new FormData(formElement);
+
+                fetch(formElement.action, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    // Semua respons dari PHP harus JSON
+                    return response.json().then(data => {
+                        if (!response.ok) {
+                            // Jika status HTTP bukan 2xx (misal 400, 409, 500), lempar error dengan pesan dari PHP
+                            throw new Error(data.message || 'Terjadi error pada server.');
+                        }
+                        return data;
+                    });
+                })
+                .then(data => {
+                    // Respons sukses (Status 200 OK)
+                    showNotification(notifElement, data.message, 'success', formElement);
+                })
+                .catch(err => {
+                    // Tangani error jaringan atau error yang dilempar dari .then
+                    showNotification(notifElement, err.message || "Gagal menghubungi server.", 'error', null);
+                });
+            });
+        }
+    }
+
+    // --- INISIALISASI FORM BUKU (backend/tambah_buku.php) ---
+    const formBuku = document.querySelector('form[action="backend/tambah_buku.php"]');
+    const notifBuku = document.getElementById('notif-buku');
+    handleFormSubmission(formBuku, notifBuku);
+
+    // --- INISIALISASI FORM ANGGOTA (backend/daftar_anggota.php) ---
+    const formAnggota = document.querySelector('form[action="backend/daftar_anggota.php"]');
+    const notifAnggota = document.getElementById('notif-anggota');
+    handleFormSubmission(formAnggota, notifAnggota);
+
+}); // End of DOMContentLoaded

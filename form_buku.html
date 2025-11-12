@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input Buku Baru - Perpustakaan Kita</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    
+    <header class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <img src="assets/picture/logo.png" alt="Logo Perpustakaan" class="logo-img">
+                Perpustakaan SMAN 8 Tangerang Selatan
+            </a>
+
+            <nav class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="berita.html">Berita</a>
+                <a href="galeri.html">Galeri</a>
+                <a href="tentang.html">Tentang</a>
+            </nav>
+            <div class="menu-toggle">
+                <button id="theme-toggle" class="theme-button">🌙</button>
+                <button class="hamburger" id="hamburger-menu">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="container page-section">
+            <h1 class="page-title">Formulir Input Buku Baru</h1>
+            
+            <div id="notif-buku" class="form-notif" style="display:none;"></div>
+
+            <form action="backend/tambah_buku.php" method="POST" class="data-form">
+                
+                <div class="form-group">
+                    <label for="judul">Judul Buku:</label>
+                    <input type="text" id="judul" name="judul" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="penulis">Penulis:</label>
+                    <input type="text" id="penulis" name="penulis" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="penerbit">Penerbit:</label>
+                    <input type="text" id="penerbit" name="penerbit">
+                </div>
+                
+                <div class="form-group">
+                    <label for="tahun">Tahun Terbit:</label>
+                    <input type="number" id="tahun" name="tahun" min="1900" max="2099" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="isbn">ISBN (jika ada):</label>
+                    <input type="text" id="isbn" name="isbn">
+                </div>
+
+                <div class="form-group">
+                    <label for="jumlah">Jumlah Stok:</label>
+                    <input type="number" id="jumlah" name="jumlah" min="1" required>
+                </div>
+                
+                <button type="submit" class="cta-button">Simpan Buku</button>
+            </form>
+            
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-center">
+            <h3>SMA Negeri 8 Tangerang Selatan</h3>
+            <p>Jl. Raya Puspitek, Buaran, Serpong, Kota Tangerang Selatan</p>
+            <p>Email: <a href="mailto:info@sma8tangsel.sch.id">info@sma8tangsel.sch.id</a></p>
+            <p>Telepon: <a href="tel:+622174300000">+62 21 7430 0000</a></p>
+            <p>Jam Operasional: Senin–Jumat, 07.00–15.00 WIB</p>
+
+            <div class="social-links">
+                <a href="https://www.instagram.com/libraryclub.id/" target="_blank" aria-label="Instagram">
+                    <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/instagram.svg" alt="Instagram">
+                </a>
+                <a href="mailto:info@sma8tangsel.sch.id" aria-label="Email">
+                    <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/gmail.svg" alt="Email">
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

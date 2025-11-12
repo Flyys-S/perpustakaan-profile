@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Anggota - Perpustakaan Kita</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <img src="assets/picture/logo.png" alt="Logo Perpustakaan" class="logo-img">
+                Perpustakaan SMAN 8 Tangerang Selatan
+            </a>
+
+            <nav class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="berita.html">Berita</a>
+                <a href="galeri.html">Galeri</a>
+                <a href="tentang.html">Tentang</a>
+            </nav>
+            <div class="menu-toggle">
+                <button id="theme-toggle" class="theme-button">🌙</button>
+                <button class="hamburger" id="hamburger-menu">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="container page-section">
+            <h1 class="page-title">Formulir Pendaftaran Anggota</h1>
+            
+            <div id="notif-anggota" class="form-notif" style="display:none;"></div>
+            
+            <form action="backend/daftar_anggota.php" method="POST" class="data-form">
+                
+                <div class="form-group">
+                    <label for="nama">Nama Lengkap:</label>
+                    <input type="text" id="nama" name="nama" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="nis">NIS/NIP:</label>
+                    <input type="text" id="nis" name="nis" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="kelas">Kelas/Jabatan:</label>
+                    <select id="kelas" name="kelas" required>
+                        <option value="">Pilih...</option>
+                        <option value="X">Kelas X</option>
+                        <option value="XI">Kelas XI</option>
+                        <option value="XII">Kelas XII</option>
+                        <option value="Guru">Guru</option>
+                        <option value="Staff">Staff</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="alamat">Alamat:</label>
+                    <textarea id="alamat" name="alamat" rows="3" required></textarea>
+                </div>
+                
+                <button type="submit" class="cta-button">Daftar Sekarang</button>
+            </form>
+            
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-center">
+            <h3>SMA Negeri 8 Tangerang Selatan</h3>
+            <p>Jl. Raya Puspitek, Buaran, Serpong, Kota Tangerang Selatan</p>
+            <p>Email: <a href="mailto:info@sma8tangsel.sch.id">info@sma8tangsel.sch.id</a></p>
+            <p>Telepon: <a href="tel:+622174300000">+62 21 7430 0000</a></p>
+            <p>Jam Operasional: Senin–Jumat, 07.00–15.00 WIB</p>
+
+            <div class="social-links">
+                <a href="https://www.instagram.com/libraryclub.id/" target="_blank" aria-label="Instagram">
+                    <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/instagram.svg" alt="Instagram">
+                </a>
+                <a href="mailto:info@sma8tangsel.sch.id" aria-label="Email">
+                    <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/gmail.svg" alt="Email">
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
