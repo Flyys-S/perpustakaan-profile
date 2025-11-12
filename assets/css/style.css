@@ -427,33 +427,48 @@ main {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* == Footer Baru == */
-.footer-grid {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 2rem;
-    flex-wrap: wrap;
+/* == Footer == */
+.footer {
+    background-color: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
+    text-align: center;
+    padding: 3rem 1rem;
+    margin-top: 3rem;
+    color: var(--text-muted);
 }
 
+/* Grid footer disusun vertikal dan di tengah */
+.footer-grid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+/* Info kontak sekolah */
 .footer-info h3 {
     color: var(--primary-color);
     margin-bottom: 0.5rem;
+    font-size: 1.5rem;
 }
 
 .footer-info p {
     margin-bottom: 0.3rem;
     color: var(--text-muted);
+    font-size: 0.95rem;
 }
 
-.footer-social h4 {
-    margin-bottom: 0.5rem;
-    color: var(--text-color);
+/* Social media */
+.footer-social {
+    margin-top: 1rem;
 }
 
 .social-links {
     display: flex;
-    gap: 1rem;
+    justify-content: center;
+    gap: 1.2rem;
+    margin-top: 0.5rem;
 }
 
 .social-links a img {
@@ -468,19 +483,17 @@ main {
     filter: invert(20%) sepia(90%) saturate(2000%) hue-rotate(180deg);
 }
 
+/* Footer bottom dihapus */
 .footer-bottom {
-    margin-top: 1.5rem;
-    border-top: 1px solid var(--border-color);
-    padding-top: 1rem;
-    text-align: center;
-    color: var(--text-muted);
-    font-size: 0.9rem;
+    display: none;
 }
 
+/* Responsif */
 @media (max-width: 768px) {
     .footer-grid {
         flex-direction: column;
         text-align: center;
         align-items: center;
+        gap: 1rem;
     }
 }
