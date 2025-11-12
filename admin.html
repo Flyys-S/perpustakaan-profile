@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard & Data - Perpustakaan</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        /* Gaya tambahan khusus untuk Admin Dashboard */
+        .admin-dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .admin-card {
+            background-color: var(--bg-secondary);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        .admin-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        .admin-card h2 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+        .admin-card p {
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+        .admin-icon {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+        
+        /* Gaya Tabel Sederhana */
+        .data-table-container {
+            margin-top: 2rem;
+            overflow-x: auto;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+            background-color: var(--bg-secondary);
+            box-shadow: var(--shadow);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .data-table th, .data-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .data-table th {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+        .data-table tr:hover {
+            background-color: var(--bg-color);
+        }
+    </style>
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <img src="assets/picture/logo.png" alt="Logo Perpustakaan" class="logo-img">
+                Admin Perpustakaan
+            </a>
+
+            <nav class="nav-links">
+                <a href="#dashboard" class="active">Dashboard</a>
+                <a href="#data-anggota">Anggota</a>
+                <a href="#data-buku">Buku</a>
+                <a href="#">Peminjaman</a>
+                <a href="index.html" class="cta-button secondary" style="padding: 8px 15px;">Keluar</a>
+            </nav>
+            <div class="menu-toggle">
+                <button id="theme-toggle" class="theme-button">🌙</button>
+                <button class="hamburger" id="hamburger-menu">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="container page-section" id="dashboard">
+            <h1 class="page-title">Selamat Datang, Petugas!</h1>
+            
+            <div class="admin-dashboard">
+                
+                <div class="admin-card">
+                    <span class="admin-icon">👥</span>
+                    <h2>Total Anggota</h2>
+                    <p>850 Orang</p>
+                    <a href="#data-anggota" class="cta-button">Lihat Data</a>
+                </div>
+
+                <div class="admin-card">
+                    <span class="admin-icon">📚</span>
+                    <h2>Total Koleksi</h2>
+                    <p>4.200 Judul</p>
+                    <a href="#data-buku" class="cta-button">Kelola Buku</a>
+                </div>
+
+                <div class="admin-card">
+                    <span class="admin-icon">📝</span>
+                    <h2>Buku Dipinjam</h2>
+                    <p>125 Eksemplar</p>
+                    <a href="#" class="cta-button">Mulai Transaksi</a>
+                </div>
+
+                <div class="admin-card">
+                    <span class="admin-icon">💲</span>
+                    <h2>Denda Terkumpul</h2>
+                    <p>Rp 750.000</p>
+                    <a href="#" class="cta-button">Lihat Laporan</a>
+                </div>
+            </div>
+        </section>
+        
+        <hr class="container" style="border-top: 1px solid var(--border-color); margin: 3rem auto;">
+
+        <section class="container page-section" id="data-anggota" style="padding-top: 0;">
+            <h2 class="section-title">Daftar Anggota Perpustakaan</h2>
+            
+            <div style="text-align: right; margin-bottom: 1rem;">
+                <a href="form_anggota.html" class="cta-button secondary">Tambah Anggota Baru</a>
+            </div>
+
+            <div class="data-table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>NIM/NISN</th>
+                            <th>Nama Lengkap</th>
+                            <th>Kelas/Jabatan</th>
+                            <th>Email</th>
+                            <th>Tgl. Daftar</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabel-anggota-body">
+                        <tr>
+                            <td>1234567890</td>
+                            <td>Budi Santoso</td>
+                            <td>XII IPA 2</td>
+                            <td>budi@mail.com</td>
+                            <td>2024-01-15</td>
+                            <td><a href="#">Edit</a> | <a href="#">Hapus</a></td>
+                        </tr>
+                        <tr>
+                            <td>20230001</td>
+                            <td>Siti Fatimah</td>
+                            <td>Guru</td>
+                            <td>siti.f@sch.id</td>
+                            <td>2023-08-20</td>
+                            <td><a href="#">Edit</a> | <a href="#">Hapus</a></td>
+                        </tr>
+                        <tr>
+                            <td>1011223344</td>
+                            <td>Ahmad Riyadi</td>
+                            <td>X MIA 1</td>
+                            <td>ahmad@mail.com</td>
+                            <td>2024-02-28</td>
+                            <td><a href="#">Edit</a> | <a href="#">Hapus</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+        </section>
+        
+        <hr class="container" style="border-top: 1px solid var(--border-color); margin: 3rem auto;">
+
+        <section class="container page-section" id="data-buku" style="padding-top: 0;">
+            <h2 class="section-title">Inventaris Koleksi Buku</h2>
+
+            <div style="text-align: right; margin-bottom: 1rem;">
+                <a href="form_buku.html" class="cta-button secondary">Tambah Buku Baru</a>
+            </div>
+
+            <div class="data-table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Kode/ISBN</th>
+                            <th>Judul</th>
+                            <th>Pengarang</th>
+                            <th>Penerbit</th>
+                            <th>Tahun</th>
+                            <th>Stok</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabel-buku-body">
+                        <tr>
+                            <td>978-602-03-3295-8</td>
+                            <td>Laskar Pelangi</td>
+                            <td>Andrea Hirata</td>
+                            <td>Bentang Pustaka</td>
+                            <td>2005</td>
+                            <td>15</td>
+                            <td><a href="#">Edit</a> | <a href="#">Hapus</a></td>
+                        </tr>
+                        <tr>
+                            <td>978-979-91-0168-9</td>
+                            <td>The Secret</td>
+                            <td>Rhonda Byrne</td>
+                            <td>Gramedia</td>
+                            <td>2006</td>
+                            <td>8</td>
+                            <td><a href="#">Edit</a> | <a href="#">Hapus</a></td>
+                        </tr>
+                        <tr>
+                            <td>KB003</td>
+                            <td>Fisika Modern Jilid 1</td>
+                            <td>Dr. Yanto</td>
+                            <td>Erlangga</td>
+                            <td>2020</td>
+                            <td>22</td>
+                            <td><a href="#">Edit</a> | <a href="#">Hapus</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div style="text-align: center; margin-top: 3rem;">
+                 <a href="#dashboard" class="cta-button secondary">Kembali ke Atas</a>
+            </div>
+            
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-center">
+            <h3>SMA Negeri 8 Tangerang Selatan</h3>
+            <p>Sistem Informasi Perpustakaan | Hak Cipta &copy; 2025</p>
+            <p>Didukung oleh: <a href="mailto:info@sma8tangsel.sch.id">info@sma8tangsel.sch.id</a></p>
+        </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+    
+</body>
+</html>

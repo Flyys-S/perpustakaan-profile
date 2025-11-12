@@ -34,42 +34,43 @@
         <section class="container page-section">
             <h1 class="page-title">Formulir Pendaftaran Anggota</h1>
             
-            <div id="notif-anggota" class="form-notif" style="display:none;"></div>
-            
+            <div id="notif-anggota" class="form-notif"></div>
+
             <form action="backend/daftar_anggota.php" method="POST" class="data-form">
                 
                 <div class="form-group">
-                    <label for="nama">Nama Lengkap:</label>
-                    <input type="text" id="nama" name="nama" required>
+                    <label for="nim_nisn">NIM / NISN:</label>
+                    <input type="text" id="nim_nisn" name="nim_nisn" required>
                 </div>
-                
+
                 <div class="form-group">
-                    <label for="nis">NIS/NIP:</label>
-                    <input type="text" id="nis" name="nis" required>
+                    <label for="nama_lengkap">Nama Lengkap:</label>
+                    <input type="text" id="nama_lengkap" name="nama_lengkap" required>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="kelas">Kelas/Jabatan:</label>
                     <select id="kelas" name="kelas" required>
-                        <option value="">Pilih...</option>
-                        <option value="X">Kelas X</option>
-                        <option value="XI">Kelas XI</option>
-                        <option value="XII">Kelas XII</option>
+                        <option value="">-- Pilih Kelas/Jabatan --</option>
+                        <option value="X MIA 1">X MIA 1</option>
+                        <option value="X MIA 2">X MIA 2</option>
+                        <option value="XI IIS 1">XI IIS 1</option>
+                        <option value="XII IPA 2">XII IPA 2</option>
                         <option value="Guru">Guru</option>
-                        <option value="Staff">Staff</option>
+                        <option value="Staf">Staf</option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" required>
+                    <label for="email">Email (Opsional):</label>
+                    <input type="email" id="email" name="email">
                 </div>
                 
                 <div class="form-group">
-                    <label for="alamat">Alamat:</label>
-                    <textarea id="alamat" name="alamat" rows="3" required></textarea>
+                    <label for="telepon">Nomor Telepon (Opsional):</label>
+                    <input type="text" id="telepon" name="telepon">
                 </div>
-                
+
                 <button type="submit" class="cta-button">Daftar Sekarang</button>
             </form>
             
@@ -79,13 +80,13 @@
     <footer class="footer">
         <div class="container footer-center">
             <h3>SMA Negeri 8 Tangerang Selatan</h3>
-            <p>Jl. Raya Puspitek, Buaran, Serpong, Kota Tangerang Selatan</p>
+            <p> Jl. Cireundeu Raya No. 5 Ciputat Timur</p>
             <p>Email: <a href="mailto:info@sma8tangsel.sch.id">info@sma8tangsel.sch.id</a></p>
-            <p>Telepon: <a href="tel:+622174300000">+62 21 7430 0000</a></p>
+            <p>Telepon: <a href="tel:(021) 7445375">(021) 7445375</a></p>
             <p>Jam Operasional: Senin–Jumat, 07.00–15.00 WIB</p>
 
             <div class="social-links">
-                <a href="https://www.instagram.com/libraryclub.id/" target="_blank" aria-label="Instagram">
+                <a href="https://instagram.com/sma8tangsel" target="_blank" aria-label="Instagram">
                     <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/instagram.svg" alt="Instagram">
                 </a>
                 <a href="mailto:info@sma8tangsel.sch.id" aria-label="Email">

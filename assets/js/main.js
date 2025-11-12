@@ -171,13 +171,109 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // --- INISIALISASI FORM BUKU (backend/tambah_buku.php) ---
-    const formBuku = document.querySelector('form[action="backend/tambah_buku.php"]');
-    const notifBuku = document.getElementById('notif-buku');
-    handleFormSubmission(formBuku, notifBuku);
+    const form = document.querySelector(".data-form");
+    const hasil = document.getElementById("hasil");
 
+// Ganti URL ini dengan URL ngrok kamu
+    const API_URL = "https://unnautical-eladia-nonsaleably.ngrok-free.dev/perpustakaan-backend/api.php";
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const data = {
+    judul: document.getElementById("judul").value,
+    anak_judul: document.getElementById("anak_judul").value,
+    pengarang: document.getElementById("pengarang").value,
+    penerbit: document.getElementById("penerbit").value,
+    tahun_terbit: document.getElementById("tahun_terbit").value,
+    sumber_buku: document.getElementById("sumber_buku").value,
+    isbn: document.getElementById("isbn").value,
+    kategori: document.getElementById("kategori").value,
+    bahasa: document.getElementById("bahasa").value
+  };
+
+  try {
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+
+    const result = await res.json();
+    hasil.textContent = result.message || result.error;
+    hasil.style.color = result.message ? "green" : "red";
+
+    form.reset();
+    loadBuku(); // otomatis tampilkan ulang daftar buku
+  } catch (err) {
+    hasil.textContent = "Gagal mengirim data: " + err.message;
+    hasil.style.color = "red";
+  }
+});
+
+    // --- INISIALISASI FORM LOGIN ADMIN (backend/login.php) ---
+
+// Fungsi untuk login admin
+// Ganti URL ini dengan ngrok kamu
+    document.getElementById("loginForm").addEventListener("submit", async function(e) {
+  e.preventDefault();
+
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
+
+  // URL backend kamu (pakai ngrok atau localhost)
+  const response = await fetch("http://localhost/perpustakaan-backend/login.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, password })
+  });
+
+  const result = await response.json();
+  const notif = document.getElementById("notif");
+
+  if (result.success) {
+    notif.textContent = "✅ Login berhasil!";
+    setTimeout(() => window.location.href = "admin.html", 1000);
+  } else {
+    notif.textContent = "❌ Username atau password salah!";
+  }
+});
+
+// 🔹 Fungsi untuk ambil data buku
+async function loadBuku() {
+  tbody.innerHTML = "<tr><td colspan='9'>Memuat data...</td></tr>";
+  try {
+    const res = await fetch(API_URL);
+    const data = await res.json();
+
+    if (!data.length) {
+      tbody.innerHTML = "<tr><td colspan='9'>Belum ada buku</td></tr>";
+      return;
+    }
+
+    tbody.innerHTML = "";
+    data.forEach(buku => {
+      tbody.innerHTML += `
+        <tr>
+          <td>${buku.judul}</td>
+          <td>${buku.anak_judul}</td>
+          <td>${buku.pengarang}</td>
+          <td>${buku.penerbit}</td>
+          <td>${buku.tahun_terbit}</td>
+          <td>${buku.sumber_buku}</td>
+          <td>${buku.isbn}</td>
+          <td>${buku.kategori}</td>
+          <td>${buku.bahasa}</td>
+        </tr>`;
+    });
+  } catch (err) {
+    tbody.innerHTML = `<tr><td colspan='9'>Gagal memuat data: ${err.message}</td></tr>`;
+  }
+}
+
+loadBuku();
     // --- INISIALISASI FORM ANGGOTA (backend/daftar_anggota.php) ---
     const formAnggota = document.querySelector('form[action="backend/daftar_anggota.php"]');
     const notifAnggota = document.getElementById('notif-anggota');
     handleFormSubmission(formAnggota, notifAnggota);
-
-}); // End of DOMContentLoaded
+    }); // End of DOMContentLoaded

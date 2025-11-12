@@ -1,43 +1,69 @@
 <?php
-// daftar_anggota.php
+// backend/daftar_anggota.php
 
-// === DEBUGGING START ===
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-// KOMENTARI header JSON agar error PHP terlihat jelas di browser
-// header('Content-Type: application/json');
-// === DEBUGGING END ===
+// Panggil file koneksi database
+require_once 'koneksi.php';
 
-// 1. Sertakan file koneksi database
-require 'koneksi.php';
+// Set header ke JSON karena frontend (main.js) mengharapkan respons JSON
+header('Content-Type: application/json');
 
-// ... (lanjutkan kode, tidak perlu diubah) ...
-
-// 4. Proses penyimpanan ke database
-try {
-    // ... (kode query INSERT) ...
-    
-    // Pastikan Anda menghapus semua 'echo' atau 'print_r' debugging sebelumnya
-    // Hapus juga baris 'echo json_encode' jika Anda memasukkannya di luar try/catch
-    
-    // ...
-    
-    // 5. Beri respons sukses (TIDAK AKAN TERCAPAI jika ada error sebelum baris ini)
-    if (!headers_sent()) {
-        header('Content-Type: application/json');
-    }
-    echo json_encode(['status' => 'success', 'message' => 'Data anggota berhasil didaftarkan!']);
-
-} catch (PDOException $e) {
-    http_response_code(500);
-    // Tampilkan pesan error di browser saat debugging
-    echo "FATAL DB ERROR: " . $e->getMessage();
-    
-    // ... (lanjutkan kode penanganan error) ...
-    
-    // Hapus baris 'echo json_encode' yang asli di sini agar tidak ada double output
-    // Hentikan eksekusi setelah catch
-    exit; 
+// Pastikan metode request adalah POST
+if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+    http_response_code(405); // Method Not Allowed
+    echo json_encode(['success' => false, 'message' => 'Metode request tidak diizinkan.']);
+    exit();
 }
+
+// =========================================================
+// ASUMSI: Form Anggota memiliki field (sesuaikan dengan form_anggota.html Anda)
+// - nama_lengkap
+// - nim_nisn (Nomor Induk)
+// - kelas
+// - email
+// - telepon
+// =========================================================
+
+// Validasi dan ambil data
+$nama_lengkap = isset($_POST['nama_lengkap']) ? trim($_POST['nama_lengkap']) : '';
+$nim_nisn     = isset($_POST['nim_nisn']) ? trim($_POST['nim_nisn']) : '';
+$kelas        = isset($_POST['kelas']) ? trim($_POST['kelas']) : '';
+$email        = isset($_POST['email']) ? trim($_POST['email']) : '';
+$telepon      = isset($_POST['telepon']) ? trim($_POST['telepon']) : '';
+
+// Validasi sederhana
+if (empty($nama_lengkap) || empty($nim_nisn) || empty($kelas)) {
+    http_response_code(400); // Bad Request
+    echo json_encode(['success' => false, 'message' => 'Nama, NIM/NISN, dan Kelas wajib diisi.']);
+    exit();
+}
+
+// Persiapan query menggunakan Prepared Statement untuk mencegah SQL Injection
+$sql = "INSERT INTO anggota (nim_nisn, nama_lengkap, kelas, email, telepon, tgl_daftar) 
+        VALUES (?, ?, ?, ?, ?, NOW())";
+        
+$stmt = $koneksi->prepare($sql);
+
+if ($stmt === false) {
+    http_response_code(500); // Internal Server Error
+    echo json_encode(['success' => false, 'message' => 'Gagal menyiapkan statement: ' . $koneksi->error]);
+    exit();
+}
+
+// Bind parameter (s: string, i: integer, d: double, b: blob)
+$stmt->bind_param("sssss", $nim_nisn, $nama_lengkap, $kelas, $email, $telepon);
+
+// Eksekusi query
+if ($stmt->execute()) {
+    // Sukses
+    http_response_code(200);
+    echo json_encode(['success' => true, 'message' => 'Pendaftaran anggota berhasil! Selamat datang di Perpustakaan.']);
+} else {
+    // Gagal (misalnya karena NIM/NISN sudah ada jika kolom itu UNIQUE)
+    $error_message = $koneksi->errno === 1062 ? 'NIM/NISN sudah terdaftar.' : 'Gagal menyimpan data: ' . $stmt->error;
+    http_response_code(409); // Conflict
+    echo json_encode(['success' => false, 'message' => $error_message]);
+}
+
+$stmt->close();
+$koneksi->close();
 ?>

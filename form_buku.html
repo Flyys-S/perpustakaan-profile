@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-    
+
     <header class="navbar">
         <div class="container">
             <a href="index.html" class="logo">
@@ -33,42 +33,65 @@
     <main>
         <section class="container page-section">
             <h1 class="page-title">Formulir Input Buku Baru</h1>
-            
-            <div id="notif-buku" class="form-notif" style="display:none;"></div>
 
-            <form action="backend/tambah_buku.php" method="POST" class="data-form">
+            <div id="notif-buku" class="form-notif"></div>
+
+            <form action="form_buku" method="POST" class="data-form">
                 
                 <div class="form-group">
-                    <label for="judul">Judul Buku:</label>
+                    <label for="judul">Judul Buku :</label>
                     <input type="text" id="judul" name="judul" required>
                 </div>
-                
+
                 <div class="form-group">
-                    <label for="penulis">Penulis:</label>
-                    <input type="text" id="penulis" name="penulis" required>
+                    <label for="anak_judul">Anak Judul :</label>
+                    <input type="text" id="anak_judul" name="anak_judul" required>
                 </div>
-                
-                <div class="form-group">
-                    <label for="penerbit">Penerbit:</label>
-                    <input type="text" id="penerbit" name="penerbit">
-                </div>
-                
-                <div class="form-group">
-                    <label for="tahun">Tahun Terbit:</label>
-                    <input type="number" id="tahun" name="tahun" min="1900" max="2099" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="isbn">ISBN (jika ada):</label>
-                    <input type="text" id="isbn" name="isbn">
+
+                 <div class="form-group">
+                    <label for="nomor_buku">Nomor buku :</label>
+                    <input type="number" id="nomor_buku" name="nomor_buku" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="jumlah">Jumlah Stok:</label>
-                    <input type="number" id="jumlah" name="jumlah" min="1" required>
+                    <label for="pengarang">Pengarang :</label>
+                    <input type="text" id="pengarang" name="pengarang">
+                </div>
+
+                <div class="form-group">
+                    <label for="penerbit">Penerbit :</label>
+                    <input type="text" id="penerbit" name="penerbit">
+                </div>
+
+                <div class="form-group">
+                    <label for="tahun_terbit">Tahun Terbit :</label>
+                    <input type="number" id="tahun_terbit" name="tahun_terbit" min="1900" max="2100">
                 </div>
                 
+                <div class="form-group">
+                    <label for="sumber_buku">Sumber Buku :</label>
+                    <input type="text" id="sumber_buku" name="sumber_buku" min="1" required>
+                </div>
+
+                 <div class="form-group">
+                    <label for="isbn">ISBN :</label>
+                    <input type="number" id="isbn" name="isbn" min="1900" max="2100">
+                </div>
+
+                 <div class="form-group">
+                    <label for="kategori">Kategori:</label>
+                    <input type="text" id="kategori" name="kategori">
+                </div>
+
+                 <div class="form-group">
+                    <label for="bahasa">Bahasa:</label>
+                    <input type="text" id="bahasa" name="bahasa">
+                </div>
+
                 <button type="submit" class="cta-button">Simpan Buku</button>
+
+                    <h3>Hasil:</h3>
+                    <div id="hasil"></div>
             </form>
             
         </section>
@@ -77,13 +100,13 @@
     <footer class="footer">
         <div class="container footer-center">
             <h3>SMA Negeri 8 Tangerang Selatan</h3>
-            <p>Jl. Raya Puspitek, Buaran, Serpong, Kota Tangerang Selatan</p>
+            <p> Jl. Cireundeu Raya No. 5 Ciputat Timur</p>
             <p>Email: <a href="mailto:info@sma8tangsel.sch.id">info@sma8tangsel.sch.id</a></p>
-            <p>Telepon: <a href="tel:+622174300000">+62 21 7430 0000</a></p>
+            <p>Telepon: <a href="tel:(021) 7445375">(021) 7445375</a></p>
             <p>Jam Operasional: Senin–Jumat, 07.00–15.00 WIB</p>
 
             <div class="social-links">
-                <a href="https://www.instagram.com/libraryclub.id/" target="_blank" aria-label="Instagram">
+                <a href="https://instagram.com/sma8tangsel" target="_blank" aria-label="Instagram">
                     <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/instagram.svg" alt="Instagram">
                 </a>
                 <a href="mailto:info@sma8tangsel.sch.id" aria-label="Email">
