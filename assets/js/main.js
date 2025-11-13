@@ -327,24 +327,21 @@ if (isProtectedPage) {
     // Dua blok kode loginForm yang konflik telah dihapus
     // dan diganti dengan satu blok yang benar di bawah ini.
     //
-    document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
+    document.getElementById('loginAdmin')?.addEventListener('submit', async (e) => {
   e.preventDefault();
 
   const username = document.getElementById('username').value.trim();
   const password = document.getElementById('password').value.trim();
 
-  // Ganti URL ini dengan URL ngrok backend kamu
   const LOGIN_URL = 'https://unnautical-eladia-nonsaleably.ngrok-free.dev/perpustakaan-backend/masuk.php';
-
   console.log('🔹 KIRIM LOGIN ->', LOGIN_URL);
 
   try {
     const res = await fetch(LOGIN_URL, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ username, password })
+      body: new URLSearchParams({ username, password })
+      // ⚠️ JANGAN tambahkan headers Content-Type manual
+      // biarkan browser otomatis kirim form-urlencoded
     });
 
     const text = await res.text();
@@ -358,17 +355,12 @@ if (isProtectedPage) {
       throw new Error('Respon bukan JSON');
     }
 
-    if (!res.ok) {
-      throw new Error(data?.message || `HTTP ${res.status}: ${res.statusText}`);
-    }
-
     if (data.success) {
-      // Simpan token ke localStorage
       localStorage.setItem('token', data.token);
-      console.log('✅ Login berhasil, redirect ke admin.html');
+      alert('✅ Login berhasil');
       location.href = 'admin.html';
     } else {
-      alert('❌ Login gagal: ' + (data.message || 'Cek username dan password'));
+      alert('❌ ' + (data.message || 'Login gagal'));
     }
 
   } catch (err) {
@@ -376,6 +368,7 @@ if (isProtectedPage) {
     alert('Gagal menghubungi server: ' + err.message);
   }
 });
+
 
 // 🔹 Fungsi untuk ambil data buku
 async function loadBuku() {
