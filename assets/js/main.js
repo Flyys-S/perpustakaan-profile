@@ -367,9 +367,9 @@ document.addEventListener("DOMContentLoaded", function() {
                     errorDiv.textContent = data.message;
                     errorDiv.style.display = 'block';
                     
-                    // Redirect ke admin.html setelah 1.5 detik
+                    // Redirect ke admin page (dilindungi) setelah 1.5 detik
                     setTimeout(() => {
-                        window.location.href = 'admin.html';
+                        window.location.href = 'admin.php';
                     }, 1500);
                 } else {
                     errorDiv.className = 'form-notif error';

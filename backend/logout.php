@@ -1,0 +1,7 @@
+<?php
+session_start();
+session_unset();  // hapus semua data sesi
+session_destroy(); // hancurkan sesi
+header('Location: login.html');
+exit;
+?>
