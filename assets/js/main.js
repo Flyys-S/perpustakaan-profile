@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function() {
         type();
     }
 
-    // === 4. HERO BACKGROUND FADE ===
+// === 4. HERO BACKGROUND FADE ===
     const hero = document.querySelector('.hero');
     if (hero) {
         const backgrounds = [
@@ -104,6 +104,71 @@ document.addEventListener("DOMContentLoaded", function() {
             bgDivs[next].style.opacity = 1;
             current = next;
         }, 5000);
+    }
+
+    // === 4B. LOGIKA MODAL BERITA (DARI BERITA.HTML) ===
+    // Cek apakah elemen modal ada di halaman ini
+    const modalOverlay = document.getElementById('news-modal-overlay');
+    
+    // Hanya jalankan kode modal jika elemen utamanya ada (agar tidak error di halaman lain)
+    if (modalOverlay) {
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+        const openModalButtons = document.querySelectorAll('.open-modal-btn');
+        const modalImage = document.getElementById('modal-img');
+        const modalTitle = document.getElementById('modal-title');
+        const modalText = document.getElementById('modal-text');
+        
+        // AMBIL ELEMEN BARU UNTUK META
+        const modalDate = document.getElementById('modal-date');
+        const modalAuthor = document.getElementById('modal-author');
+
+        // Fungsi untuk menutup modal
+        function closeModal() {
+            modalOverlay.classList.remove('active');
+        }
+
+        // Tambahkan event ke tombol "Baca Selengkapnya"
+        openModalButtons.forEach(button => {
+            button.addEventListener('click', (event) => {
+                event.preventDefault(); // Mencegah link pindah halaman
+                
+                // Ambil data dari atribut 'data-*'
+                const imgSrc = button.dataset.imgSrc;
+                const title = button.dataset.title;
+                const fullText = button.dataset.fullText;
+                
+                // AMBIL DATA BARU
+                const date = button.dataset.date;
+                const author = button.dataset.author;
+                
+                // Masukkan data ke modal
+                modalImage.src = imgSrc;
+                modalTitle.textContent = title;
+                modalText.textContent = fullText;
+                
+                // MASUKKAN DATA BARU (Gunakan emoji 📅 dan 👤)
+                if (modalDate && modalAuthor) { // Cek dulu elemennya ada
+                    modalDate.textContent = date ? `📅 ${date}` : '';
+                    modalAuthor.textContent = author ? `👤 ${author}` : '';
+                }
+                
+                // Tampilkan modal
+                modalOverlay.classList.add('active');
+            });
+        });
+
+        // Tambahkan event ke tombol close (X)
+        if (modalCloseBtn) {
+            modalCloseBtn.addEventListener('click', closeModal);
+        }
+
+        // Tambahkan event ke overlay (area gelap) untuk menutup
+        modalOverlay.addEventListener('click', (event) => {
+            // Hanya tutup jika yang diklik adalah overlay-nya langsung
+            if (event.target === modalOverlay) {
+                closeModal();
+            }
+        });
     }
     
     // =======================================================
@@ -212,53 +277,103 @@ form.addEventListener("submit", async (e) => {
 });
 
     // --- INISIALISASI FORM LOGIN ADMIN (backend/login.php) ---
-//fungsi admin
-// Cek token
-  const token = localStorage.getItem('token');
-  if (!token) {
-    // Jika belum login, langsung ke login
-    window.location.href = 'login.html';
-  } else {
-    // (Opsional) Bisa cek token ke backend
-    fetch('https://unnautical-eladia-nonsaleably.ngrok-free.dev/perpustakaan-backend/check_token.php' + token)
-      .then(res => res.json())
-      .then(data => {
-        if (!data.valid) {
-          localStorage.removeItem('token');
-          window.location.href = 'login.html';
-        }
-      });
-  }
+    //
+    // MODIFIKASI DI SINI:
+    // token admin
+    const isProtectedPage = !!document.getElementById('logout') || document.body.classList.contains('admin-page');
 
-  // Tombol logout
-  document.getElementById('logout').addEventListener('click', () => {
-    localStorage.removeItem('token');
-    window.location.href = 'login.html';
-  });
+if (isProtectedPage) {
+    const token = localStorage.getItem('token');
+    console.log('[AUTH] isProtectedPage=true, token=', token);
 
-// Fungsi untuk login admin
-// Ganti URL ini dengan ngrok kamu
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    if (!token) {
+        console.log('[AUTH] token tidak ditemukan -> redirect ke login');
+        if (!location.pathname.endsWith('login.html')) location.href = 'login.html';
+    } else {
+        // debug: panggil check_token dan log detailnya
+        const CHECK_URL = 'https://unnautical-eladia-nonsaleably.ngrok-free.dev/perpustakaan-backend/check_token.php?token=' + encodeURIComponent(token);
+        console.log('[AUTH] cek token ke', CHECK_URL);
+
+        fetch(CHECK_URL, { method: 'GET' })
+            .then(async res => {
+                const text = await res.text();
+                console.log('[AUTH] check_token status=', res.status, 'text=', text);
+                let data = null;
+                try { data = JSON.parse(text); } catch (err) { console.warn('[AUTH] check_token bukan JSON:', err); }
+
+                // bila format tidak sesuai, jangan langsung redirect — tampilkan alert dan keluarkan token utk debugging
+                if (!res.ok || !data) {
+                    console.warn('[AUTH] check_token error atau respons invalid, tidak otomatis redirect. Hapus token jika memang sengaja invalid.');
+                    // uncomment jika ingin otomatis logout ketika invalid:
+                    // localStorage.removeItem('token'); location.href = 'login.html';
+                    return;
+                }
+
+                if (!data.valid) {
+                    console.log('[AUTH] token tidak valid menurut server -> hapus token dan redirect ke login');
+                    localStorage.removeItem('token');
+                    location.href = 'login.html';
+                } else {
+                    console.log('[AUTH] token valid, user tetap di halaman');
+                }
+            })
+            .catch(err => {
+                console.error('[AUTH] fetch check_token gagal:', err);
+                // jangan langsung redirect supaya bisa debugging; hapus token jika yakin server down
+                // localStorage.removeItem('token'); location.href = 'login.html';
+            });
+    }
+}
+    // Dua blok kode loginForm yang konflik telah dihapus
+    // dan diganti dengan satu blok yang benar di bawah ini.
+    //
+    document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
   e.preventDefault();
-  const username = document.getElementById('username').value;
-  const password = document.getElementById('password').value;
 
-  const res = await fetch('https://unnautical-eladia-nonsaleably.ngrok-free.dev/perpustakaan-backend/login.php', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ username, password })
-  });
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value.trim();
 
-  const data = await response.json();
-console.log(data);
+  // Ganti URL ini dengan URL ngrok backend kamu
+  const LOGIN_URL = 'https://unnautical-eladia-nonsaleably.ngrok-free.dev/perpustakaan-backend/masuk.php';
 
-  if (data.success) {
-    // Simpan token di localStorage
-    localStorage.setItem('token', data.token);
-    alert('Login berhasil!');
-    window.location.href = 'admin.html';
-  } else {
-    alert('Login gagal: ' + data.message);
+  console.log('🔹 KIRIM LOGIN ->', LOGIN_URL);
+
+  try {
+    const res = await fetch(LOGIN_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ username, password })
+    });
+
+    const text = await res.text();
+    console.log('🔹 RESPON RAW:', text);
+
+    let data;
+    try { 
+      data = JSON.parse(text); 
+    } catch (err) { 
+      console.error('❌ JSON parse error:', err);
+      throw new Error('Respon bukan JSON');
+    }
+
+    if (!res.ok) {
+      throw new Error(data?.message || `HTTP ${res.status}: ${res.statusText}`);
+    }
+
+    if (data.success) {
+      // Simpan token ke localStorage
+      localStorage.setItem('token', data.token);
+      console.log('✅ Login berhasil, redirect ke admin.html');
+      location.href = 'admin.html';
+    } else {
+      alert('❌ Login gagal: ' + (data.message || 'Cek username dan password'));
+    }
+
+  } catch (err) {
+    console.error('❌ ERROR:', err);
+    alert('Gagal menghubungi server: ' + err.message);
   }
 });
 

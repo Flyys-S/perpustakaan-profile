@@ -5,72 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard & Data - Perpustakaan</title>
     <link rel="stylesheet" href="assets/css/style.css">
-    <style>
-        /* Gaya tambahan khusus untuk Admin Dashboard */
-        .admin-dashboard {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-        .admin-card {
-            background-color: var(--bg-secondary);
-            border-radius: 12px;
-            box-shadow: var(--shadow);
-            padding: 2rem;
-            text-align: center;
-            transition: transform 0.3s ease;
-        }
-        .admin-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-        }
-        .admin-card h2 {
-            font-size: 1.8rem;
-            margin-bottom: 0.5rem;
-            color: var(--primary-color);
-        }
-        .admin-card p {
-            color: var(--text-muted);
-            margin-bottom: 1.5rem;
-        }
-        .admin-icon {
-            font-size: 3rem;
-            display: block;
-            margin-bottom: 1rem;
-            color: var(--primary-color);
-        }
-        
-        /* Gaya Tabel Sederhana */
-        .data-table-container {
-            margin-top: 2rem;
-            overflow-x: auto;
-        }
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 2rem;
-            background-color: var(--bg-secondary);
-            box-shadow: var(--shadow);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        .data-table th, .data-table td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-        }
-        .data-table th {
-            background-color: var(--primary-color);
-            color: #ffffff;
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.9rem;
-        }
-        .data-table tr:hover {
-            background-color: var(--bg-color);
-        }
-    </style>
 </head>
 <body>
 
@@ -86,7 +20,7 @@
                 <a href="#data-anggota">Anggota</a>
                 <a href="#data-buku">Buku</a>
                 <a href="#">Peminjaman</a>
-                <a href="login.html" class="logout" style="padding: 8px 15px;">Logout</a>
+                <a href="login.html" class="logout">Logout</a>
             </nav>
             <div class="menu-toggle">
                 <button id="theme-toggle" class="theme-button">🌙</button>
@@ -100,7 +34,6 @@
     <main>
         <section class="container page-section" id="dashboard">
             <h1 class="page-title">Selamat Datang, Petugas!</h1>
-            
             
             <div class="admin-dashboard">
                 
@@ -134,12 +67,12 @@
             </div>
         </section>
         
-        <hr class="container" style="border-top: 1px solid var(--border-color); margin: 3rem auto;">
+        <hr class="container page-divider">
 
-        <section class="container page-section" id="data-anggota" style="padding-top: 0;">
+        <section class="container page-section pt-0" id="data-anggota">
             <h2 class="section-title">Daftar Anggota Perpustakaan</h2>
             
-            <div style="text-align: right; margin-bottom: 1rem;">
+            <div class="form-add-button">
                 <a href="form_anggota.html" class="cta-button secondary">Tambah Anggota Baru</a>
             </div>
 
@@ -186,12 +119,12 @@
             
         </section>
         
-        <hr class="container" style="border-top: 1px solid var(--border-color); margin: 3rem auto;">
+        <hr class="container page-divider">
 
-        <section class="container page-section" id="data-buku" style="padding-top: 0;">
+        <section class="container page-section pt-0" id="data-buku">
             <h2 class="section-title">Inventaris Koleksi Buku</h2>
 
-            <div style="text-align: right; margin-bottom: 1rem;">
+            <div class="form-add-button">
                 <a href="form_buku.html" class="cta-button secondary">Tambah Buku Baru</a>
             </div>
 
@@ -240,7 +173,7 @@
                 </table>
             </div>
             
-            <div style="text-align: center; margin-top: 3rem;">
+            <div class="back-to-top-link">
                  <a href="#dashboard" class="cta-button secondary">Kembali ke Atas</a>
             </div>
             

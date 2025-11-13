@@ -6,15 +6,33 @@
     <title>Login Petugas - Perpustakaan SMAN 8</title>
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body class="login-page"> <main>
-        <div class="login-card">
+
+<body>
+    
+    <header class="navbar">
+        <div class="container">
             <a href="index.html" class="logo">
                 <img src="assets/picture/logo.png" alt="Logo Perpustakaan" class="logo-img">
+                Perpustakaan SMAN 8 Tangerang Selatan
             </a>
+            
+            <div class="menu-toggle">
+                <button id="theme-toggle" class="theme-button">🌙</button>
+                <button class="hamburger" id="hamburger-menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+    <main class="page-section">
+        
+        <div class="login-card" style="margin: 0 auto;">
             
             <h1>Login Petugas</h1>
 
-            <form id="loginForm">
+            <form id="loginForm" method="POST" action="https://unnautical-eladia-nonsaleably.ngrok-free.dev/perpustakaan-backend/masuk.php">
                 
                 <div class="form-group">
                     <label for="username">Username:</label>
@@ -28,17 +46,14 @@
 
                 <div id="form-notif-error" class="form-notif error" style="display: none;"></div>
 
-                <div id="submit">
-                    <a href="admin.html" class="submit" style="display: none;"></a>
-                    
-                    <button type="submit" class="cta-button">Masuk ke Admin</button>
-                </div>
-            </form>
+                <button type="submit" class="cta-button">Masuk ke Admin</button>
+                </form>
 
             <a href="index.html" class="back-link">← Kembali ke Beranda</a>
         </div>
     </main>
 
     <script src="assets/js/main.js"></script>
-    </body>
+    
+</body>
 </html>

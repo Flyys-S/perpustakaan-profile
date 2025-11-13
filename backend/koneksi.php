@@ -1,23 +1,24 @@
 <?php
-// backend/koneksi.php
+$host = "localhost";
+$user = "root"; // default Laragon
+$pass = "";     // kosong kalau belum kamu ubah
+$db   = "perpustakaan_db"; // nanti kita buat di phpMyAdmin
 
-$host = "localhost"; // Biasanya localhost
-$user = "root";      // Ganti dengan username database Anda
-$pass = "";          // Ganti dengan password database Anda
-$db   = "perpustakaan_db"; // Ganti dengan nama database Anda
+$conn = new mysqli($host, $user, $pass, $db);
 
-// Buat koneksi
-$koneksi = new mysqli($host, $user, $pass, $db);
+if ($conn->connect_error) {
+    die(json_encode(["status" => "error", "message" => $conn->connect_error]));
+}
 
-// Cek koneksi
-if ($koneksi->connect_error) {
-    // Jika gagal, tampilkan pesan error dalam format JSON
-    header('Content-Type: application/json');
-    http_response_code(500); // Internal Server Error
-    echo json_encode([
-        'success' => false,
-        'message' => 'Koneksi database gagal: ' . $koneksi->connect_error
-    ]);
-    exit(); // Hentikan eksekusi script
+// Header untuk mengizinkan akses dari frontend
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type");
+header("Content-Type: application/json");
+
+// Handle preflight (OPTIONS) request agar fetch() tidak error
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    http_response_code(200);
+    exit();
 }
 ?>
