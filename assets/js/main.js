@@ -279,96 +279,65 @@ form.addEventListener("submit", async (e) => {
     // --- INISIALISASI FORM LOGIN ADMIN (backend/login.php) ---
     //
     // MODIFIKASI DI SINI:
-    // token admin
-    const isProtectedPage = !!document.getElementById('logout') || document.body.classList.contains('admin-page');
+    // Handle form login
+        document.getElementById('loginAdmin').addEventListener('submit', function(e) {
+            e.preventDefault(); // Cegah default form submission
 
-if (isProtectedPage) {
-    const token = localStorage.getItem('token');
-    console.log('[AUTH] isProtectedPage=true, token=', token);
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const errorDiv = document.getElementById('form-notif-error');
 
-    if (!token) {
-        console.log('[AUTH] token tidak ditemukan -> redirect ke login');
-        if (!location.pathname.endsWith('login.html')) location.href = 'login.html';
-    } else {
-        // debug: panggil check_token dan log detailnya
-        const CHECK_URL = 'https://unnautical-eladia-nonsaleably.ngrok-free.dev/perpustakaan-backend/check_token.php?token=' + encodeURIComponent(token);
-        console.log('[AUTH] cek token ke', CHECK_URL);
+            // Reset error message
+            errorDiv.style.display = 'none';
+            errorDiv.textContent = '';
 
-        fetch(CHECK_URL, { method: 'GET' })
-            .then(async res => {
-                const text = await res.text();
-                console.log('[AUTH] check_token status=', res.status, 'text=', text);
-                let data = null;
-                try { data = JSON.parse(text); } catch (err) { console.warn('[AUTH] check_token bukan JSON:', err); }
+            // Validasi input
+            if (!username || !password) {
+                errorDiv.textContent = 'Username dan password harus diisi!';
+                errorDiv.style.display = 'block';
+                return;
+            }
 
-                // bila format tidak sesuai, jangan langsung redirect — tampilkan alert dan keluarkan token utk debugging
-                if (!res.ok || !data) {
-                    console.warn('[AUTH] check_token error atau respons invalid, tidak otomatis redirect. Hapus token jika memang sengaja invalid.');
-                    // uncomment jika ingin otomatis logout ketika invalid:
-                    // localStorage.removeItem('token'); location.href = 'login.html';
-                    return;
-                }
+            // Disable button saat loading
+            const submitBtn = document.getElementById('LoginAdmin');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sedang Login...';
 
-                if (!data.valid) {
-                    console.log('[AUTH] token tidak valid menurut server -> hapus token dan redirect ke login');
-                    localStorage.removeItem('token');
-                    location.href = 'login.html';
+            // Kirim data ke backend menggunakan fetch
+            fetch('backend/cek_login.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    errorDiv.className = 'form-notif success';
+                    errorDiv.textContent = data.message;
+                    errorDiv.style.display = 'block';
+                    
+                    // Redirect ke admin.html setelah 1.5 detik
+                    setTimeout(() => {
+                        window.location.href = 'admin.html';
+                    }, 1500);
                 } else {
-                    console.log('[AUTH] token valid, user tetap di halaman');
+                    errorDiv.className = 'form-notif error';
+                    errorDiv.textContent = data.message;
+                    errorDiv.style.display = 'block';
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Masuk ke Admin';
                 }
             })
-            .catch(err => {
-                console.error('[AUTH] fetch check_token gagal:', err);
-                // jangan langsung redirect supaya bisa debugging; hapus token jika yakin server down
-                // localStorage.removeItem('token'); location.href = 'login.html';
+            .catch(error => {
+                errorDiv.className = 'form-notif error';
+                errorDiv.textContent = 'Terjadi kesalahan: ' + error;
+                errorDiv.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Masuk ke Admin';
             });
-    }
-}
-    // Dua blok kode loginForm yang konflik telah dihapus
-    // dan diganti dengan satu blok yang benar di bawah ini.
-    //
-    document.getElementById('loginAdmin')?.addEventListener('submit', async (e) => {
-  e.preventDefault();
-
-  const username = document.getElementById('username').value.trim();
-  const password = document.getElementById('password').value.trim();
-
-  const LOGIN_URL = 'https://unnautical-eladia-nonsaleably.ngrok-free.dev/perpustakaan-backend/masuk.php';
-  console.log('🔹 KIRIM LOGIN ->', LOGIN_URL);
-
-  try {
-    const res = await fetch(LOGIN_URL, {
-      method: 'POST',
-      body: new URLSearchParams({ username, password })
-      // ⚠️ JANGAN tambahkan headers Content-Type manual
-      // biarkan browser otomatis kirim form-urlencoded
-    });
-
-    const text = await res.text();
-    console.log('🔹 RESPON RAW:', text);
-
-    let data;
-    try { 
-      data = JSON.parse(text); 
-    } catch (err) { 
-      console.error('❌ JSON parse error:', err);
-      throw new Error('Respon bukan JSON');
-    }
-
-    if (data.success) {
-      localStorage.setItem('token', data.token);
-      alert('✅ Login berhasil');
-      location.href = 'admin.html';
-    } else {
-      alert('❌ ' + (data.message || 'Login gagal'));
-    }
-
-  } catch (err) {
-    console.error('❌ ERROR:', err);
-    alert('Gagal menghubungi server: ' + err.message);
-  }
-});
-
+        });
 
 // 🔹 Fungsi untuk ambil data buku
 async function loadBuku() {
