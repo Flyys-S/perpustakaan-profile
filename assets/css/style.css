@@ -438,6 +438,8 @@ main {
 .contact-info li {
     margin-bottom: 0.75rem;
 }
+
+/* == .form-group (Global, digunakan di Kontak & Form Data) == */
 .form-group {
     margin-bottom: 1.5rem;
 }
@@ -631,22 +633,16 @@ main {
     box-shadow: var(--shadow);
 }
 
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-    color: var(--text-color);
-}
+/*
+   CATATAN: .form-group dan turunannya sudah didefinisikan
+   di bagian Halaman Kontak, jadi tidak perlu ditulis ulang.
+*/
 
 .form-group input[type="text"],
 .form-group input[type="email"],
 .form-group input[type="number"],
-.form-group select,
-.form-group textarea {
+.form-group select {
+    /* Gaya input spesifik untuk form data */
     width: 100%;
     padding: 12px;
     border: 1px solid var(--border-color);
@@ -687,3 +683,68 @@ main {
     border: 1px solid #f5c6cb;
 }
 /* End of Form Styles */
+
+
+/* ================================== */
+/* ==      GAYA HALAMAN LOGIN      == */
+/* ================================== */
+
+/* Body khusus untuk halaman login */
+.login-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+/* Kartu login di tengah */
+.login-card {
+    max-width: 400px;
+    width: 100%;
+    background-color: var(--bg-secondary);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    padding: 3rem;
+    text-align: center;
+}
+
+/* Judul di dalam kartu login */
+.login-card h1 {
+    color: var(--primary-color);
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    font-weight: 700;
+}
+
+/* Logo di tengah (khusus halaman login) */
+.login-card .logo {
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+/* Teks rata kiri untuk form di dalam login */
+.login-card .form-group {
+    text-align: left;
+}
+
+/* Input spesifik untuk login 
+   (Menggunakan style dari .form-group global) 
+*/
+.login-card .form-group input {
+    /* Tidak perlu duplikat, sudah di-cover oleh .form-group input global */
+}
+
+/* Tombol login (lebar penuh) */
+.login-card .cta-button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 1rem;
+}
+
+/* Link kembali ke beranda */
+.back-link {
+    display: block;
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+}

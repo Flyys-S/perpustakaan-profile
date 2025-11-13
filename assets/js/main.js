@@ -212,30 +212,53 @@ form.addEventListener("submit", async (e) => {
 });
 
     // --- INISIALISASI FORM LOGIN ADMIN (backend/login.php) ---
+//fungsi admin
+// Cek token
+  const token = localStorage.getItem('token');
+  if (!token) {
+    // Jika belum login, langsung ke login
+    window.location.href = 'login.html';
+  } else {
+    // (Opsional) Bisa cek token ke backend
+    fetch('https://unnautical-eladia-nonsaleably.ngrok-free.dev/perpustakaan-backend/check_token.php' + token)
+      .then(res => res.json())
+      .then(data => {
+        if (!data.valid) {
+          localStorage.removeItem('token');
+          window.location.href = 'login.html';
+        }
+      });
+  }
+
+  // Tombol logout
+  document.getElementById('logout').addEventListener('click', () => {
+    localStorage.removeItem('token');
+    window.location.href = 'login.html';
+  });
 
 // Fungsi untuk login admin
 // Ganti URL ini dengan ngrok kamu
-    document.getElementById("loginForm").addEventListener("submit", async function(e) {
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
   e.preventDefault();
+  const username = document.getElementById('username').value;
+  const password = document.getElementById('password').value;
 
-  const username = document.getElementById("username").value;
-  const password = document.getElementById("password").value;
-
-  // URL backend kamu (pakai ngrok atau localhost)
-  const response = await fetch("http://localhost/perpustakaan-backend/login.php", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+  const res = await fetch('https://unnautical-eladia-nonsaleably.ngrok-free.dev/perpustakaan-backend/login.php', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({ username, password })
   });
 
-  const result = await response.json();
-  const notif = document.getElementById("notif");
+  const data = await response.json();
+console.log(data);
 
-  if (result.success) {
-    notif.textContent = "✅ Login berhasil!";
-    setTimeout(() => window.location.href = "admin.html", 1000);
+  if (data.success) {
+    // Simpan token di localStorage
+    localStorage.setItem('token', data.token);
+    alert('Login berhasil!');
+    window.location.href = 'admin.html';
   } else {
-    notif.textContent = "❌ Username atau password salah!";
+    alert('Login gagal: ' + data.message);
   }
 });
 
