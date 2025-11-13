@@ -17,6 +17,7 @@
 
             <nav class="nav-links">
                 <a href="#dashboard" class="active">Dashboard</a>
+                <a href="#verifikasi-anggota">Verifikasi Anggota</a>
                 <a href="#data-anggota">Anggota</a>
                 <a href="#data-buku">Buku</a>
                 <a href="#">Peminjaman</a>
@@ -69,7 +70,34 @@
         
         <hr class="container page-divider">
 
-        <section class="container page-section pt-0" id="data-anggota">
+        <section class="container page-section pt-0" id="verifikasi-anggota">
+            <h2 class="section-title">Verifikasi Pendaftaran Anggota Baru</h2>
+            
+            <div id="notif-verifikasi" class="form-notif" style="display: none;"></div>
+
+            <div class="data-table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Nama</th>
+                            <th>Kelas</th>
+                            <th>Alasan</th>
+                            <th>Foto</th>
+                            <th>Tanggal Daftar</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabel-verifikasi-body">
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 20px;">Memuat data pendaftar...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+        </section>
+
+        <hr class="container page-divider">
             <h2 class="section-title">Daftar Anggota Perpustakaan</h2>
             
             <div class="form-add-button">
@@ -189,6 +217,91 @@
     </footer>
 
     <script src="assets/js/main.js"></script>
+    
+    <script>
+        // Load data pendaftar yang menunggu verifikasi
+        function loadVerifikasiAnggota() {
+            fetch('backend/verifikasi_anggota.php')
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.getElementById('tabel-verifikasi-body');
+                    
+                    if (data.status === 'success' && data.data.length > 0) {
+                        tbody.innerHTML = '';
+                        data.data.forEach(item => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${item.nama}</td>
+                                <td>${item.kelas}</td>
+                                <td>${item.alasan}</td>
+                                <td>
+                                    ${item.foto ? `<a href="${item.foto}" target="_blank">Lihat</a>` : '-'}
+                                </td>
+                                <td>${item.tanggal_daftar}</td>
+                                <td>
+                                    <button onclick="verifikasiAnggota(${item.id}, 'terima')" class="cta-button" style="background-color: #28a745;">Terima</button>
+                                    <button onclick="verifikasiAnggota(${item.id}, 'tolak')" class="cta-button" style="background-color: #dc3545;">Tolak</button>
+                                </td>
+                            `;
+                            tbody.appendChild(row);
+                        });
+                    } else {
+                        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px;">Tidak ada pendaftar yang menunggu verifikasi.</td></tr>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading verifikasi data:', error);
+                    document.getElementById('tabel-verifikasi-body').innerHTML = 
+                        '<tr><td colspan="6" style="text-align: center; padding: 20px; color: red;">Gagal memuat data</td></tr>';
+                });
+        }
+
+        // Function untuk verifikasi anggota (terima/tolak)
+        function verifikasiAnggota(id, aksi) {
+            const notifDiv = document.getElementById('notif-verifikasi');
+            
+            if (!confirm(`Apakah Anda yakin ingin ${aksi === 'terima' ? 'menerima' : 'menolak'} pendaftaran ini?`)) {
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('id', id);
+            formData.append('aksi', aksi);
+
+            fetch('backend/verifikasi_anggota.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    notifDiv.className = 'form-notif success';
+                    notifDiv.textContent = data.message;
+                    notifDiv.style.display = 'block';
+                    
+                    // Reload data setelah 1 detik
+                    setTimeout(() => {
+                        loadVerifikasiAnggota();
+                        notifDiv.style.display = 'none';
+                    }, 1500);
+                } else {
+                    notifDiv.className = 'form-notif error';
+                    notifDiv.textContent = data.message;
+                    notifDiv.style.display = 'block';
+                }
+            })
+            .catch(error => {
+                notifDiv.className = 'form-notif error';
+                notifDiv.textContent = 'Terjadi kesalahan: ' + error;
+                notifDiv.style.display = 'block';
+            });
+        }
+
+        // Load data verifikasi saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', function() {
+            loadVerifikasiAnggota();
+        });
+    </script>
     
 </body>
 </html>

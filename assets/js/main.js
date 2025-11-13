@@ -235,46 +235,95 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-    // --- INISIALISASI FORM BUKU (backend/tambah_buku.php) ---
-    const form = document.querySelector(".data-form");
-    const hasil = document.getElementById("hasil");
+    // --- INISIALISASI FORM BUKU (backend/api.php) ---
+    const formBuku = document.getElementById('formBuku');
+    if (formBuku) {
+        formBuku.addEventListener('submit', function(e) {
+            e.preventDefault(); // Cegah default form submission
 
-// Ganti URL ini dengan URL ngrok kamu
-    const API_URL = "https://unnautical-eladia-nonsaleably.ngrok-free.dev/perpustakaan-backend/api.php";
+            // Ambil semua nilai dari form
+            const judul = document.getElementById('judul').value.trim();
+            const anakJudul = document.getElementById('anak_judul').value.trim();
+            const nomorBuku = document.getElementById('nomor_buku').value.trim();
+            const pengarang = document.getElementById('pengarang').value.trim();
+            const penerbit = document.getElementById('penerbit').value.trim();
+            const tahunTerbit = document.getElementById('tahun_terbit').value.trim();
+            const sumberBuku = document.getElementById('sumber_buku').value.trim();
+            const isbn = document.getElementById('isbn').value.trim();
+            const kategori = document.getElementById('kategori').value.trim();
+            const bahasa = document.getElementById('bahasa').value.trim();
+            const hasilDiv = document.getElementById('hasil');
+            const notifDiv = document.getElementById('notif-buku');
 
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
+            // Reset notifikasi
+            notifDiv.style.display = 'none';
+            notifDiv.textContent = '';
+            notifDiv.className = 'form-notif';
 
-  const data = {
-    judul: document.getElementById("judul").value,
-    anak_judul: document.getElementById("anak_judul").value,
-    pengarang: document.getElementById("pengarang").value,
-    penerbit: document.getElementById("penerbit").value,
-    tahun_terbit: document.getElementById("tahun_terbit").value,
-    sumber_buku: document.getElementById("sumber_buku").value,
-    isbn: document.getElementById("isbn").value,
-    kategori: document.getElementById("kategori").value,
-    bahasa: document.getElementById("bahasa").value
-  };
+            // Validasi input wajib
+            if (!judul || !anakJudul || !nomorBuku || !sumberBuku) {
+                notifDiv.textContent = 'Judul, Anak Judul, Nomor Buku, dan Sumber Buku wajib diisi!';
+                notifDiv.className = 'form-notif error';
+                notifDiv.style.display = 'block';
+                return;
+            }
 
-  try {
-    const res = await fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
-    });
+            // Disable button saat loading
+            const submitBtn = formBuku.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Menyimpan...';
 
-    const result = await res.json();
-    hasil.textContent = result.message || result.error;
-    hasil.style.color = result.message ? "green" : "red";
+            // Gunakan FormData untuk mengirim data
+            const formData = new FormData();
+            formData.append('judul', judul);
+            formData.append('anak_judul', anakJudul);
+            formData.append('nomor_buku', nomorBuku);
+            formData.append('pengarang', pengarang);
+            formData.append('penerbit', penerbit);
+            formData.append('tahun_terbit', tahunTerbit);
+            formData.append('sumber_buku', sumberBuku);
+            formData.append('isbn', isbn);
+            formData.append('kategori', kategori);
+            formData.append('bahasa', bahasa);
 
-    form.reset();
-    loadBuku(); // otomatis tampilkan ulang daftar buku
-  } catch (err) {
-    hasil.textContent = "Gagal mengirim data: " + err.message;
-    hasil.style.color = "red";
-  }
-});
+            // Kirim data ke backend menggunakan fetch (local API)
+            fetch('backend/api.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    notifDiv.className = 'form-notif success';
+                    notifDiv.textContent = data.message;
+                    notifDiv.style.display = 'block';
+                    hasilDiv.innerHTML = '<p style="color: green;">✅ ' + data.message + '</p>';
+                    
+                    // Reset form
+                    formBuku.reset();
+                    
+                    // Reset button
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Simpan Buku';
+                } else {
+                    notifDiv.className = 'form-notif error';
+                    notifDiv.textContent = data.message;
+                    notifDiv.style.display = 'block';
+                    hasilDiv.innerHTML = '<p style="color: red;">❌ ' + data.message + '</p>';
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Simpan Buku';
+                }
+            })
+            .catch(error => {
+                notifDiv.className = 'form-notif error';
+                notifDiv.textContent = 'Terjadi kesalahan: ' + error;
+                notifDiv.style.display = 'block';
+                hasilDiv.innerHTML = '<p style="color: red;">❌ Terjadi kesalahan: ' + error + '</p>';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Simpan Buku';
+            });
+        });
+    }
 
     // --- INISIALISASI FORM LOGIN ADMIN (backend/login.php) ---
     //
@@ -339,41 +388,28 @@ form.addEventListener("submit", async (e) => {
             });
         });
 
-// 🔹 Fungsi untuk ambil data buku
-async function loadBuku() {
-  tbody.innerHTML = "<tr><td colspan='9'>Memuat data...</td></tr>";
-  try {
-    const res = await fetch(API_URL);
-    const data = await res.json();
 
-    if (!data.length) {
-      tbody.innerHTML = "<tr><td colspan='9'>Belum ada buku</td></tr>";
-      return;
-    }
-
-    tbody.innerHTML = "";
-    data.forEach(buku => {
-      tbody.innerHTML += `
-        <tr>
-          <td>${buku.judul}</td>
-          <td>${buku.anak_judul}</td>
-          <td>${buku.pengarang}</td>
-          <td>${buku.penerbit}</td>
-          <td>${buku.tahun_terbit}</td>
-          <td>${buku.sumber_buku}</td>
-          <td>${buku.isbn}</td>
-          <td>${buku.kategori}</td>
-          <td>${buku.bahasa}</td>
-        </tr>`;
-    });
-  } catch (err) {
-    tbody.innerHTML = `<tr><td colspan='9'>Gagal memuat data: ${err.message}</td></tr>`;
-  }
-}
-
-loadBuku();
-    // --- INISIALISASI FORM ANGGOTA (backend/daftar_anggota.php) ---
-    const formAnggota = document.querySelector('form[action="backend/daftar_anggota.php"]');
-    const notifAnggota = document.getElementById('notif-anggota');
-    handleFormSubmission(formAnggota, notifAnggota);
+// 🔹 Fungsi untuk ambil data buku (untuk admin dashboard - jika diperlukan)
+    // Uncomment dan modifikasi jika ingin menampilkan daftar buku di admin
+    // const tbodyBuku = document.getElementById('tabel-buku-body');
+    // if (tbodyBuku) {
+    //     async function loadBuku() {
+    //       tbodyBuku.innerHTML = "<tr><td colspan='7'>Memuat data...</td></tr>";
+    //       try {
+    //         const res = await fetch('backend/api.php');
+    //         const data = await res.json();
+    //         if (!data.length) {
+    //           tbodyBuku.innerHTML = "<tr><td colspan='7'>Belum ada buku</td></tr>";
+    //           return;
+    //         }
+    //         tbodyBuku.innerHTML = "";
+    //         data.forEach(buku => {
+    //           tbodyBuku.innerHTML += `<tr><td>${buku.isbn}</td><td>${buku.judul}</td><td>${buku.pengarang}</td><td>${buku.penerbit}</td><td>${buku.tahun_terbit}</td><td>${buku.stok || '-'}</td><td><a href="#">Edit</a> | <a href="#">Hapus</a></td></tr>`;
+    //         });
+    //       } catch (err) {
+    //         tbodyBuku.innerHTML = `<tr><td colspan='7'>Gagal memuat data: ${err.message}</td></tr>`;
+    //       }
+    //     }
+    //     loadBuku();
+    // }
     }); // End of DOMContentLoaded

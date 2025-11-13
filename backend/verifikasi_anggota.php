@@ -1,46 +1,72 @@
 <?php
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Headers: Content-Type");
-header("Access-Control-Allow-Methods: POST, OPTIONS");
+// Panggil file koneksi database
+include 'koneksi.php';
 
-include "config.php";
-
-if ($_SERVER["REQUEST_METHOD"] == "OPTIONS") {
-    http_response_code(200);
-    exit();
+// Cek apakah request adalah POST
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    
+    // Ambil data dari request
+    $id = mysqli_escape_string($conn, $_POST['id'] ?? '');
+    $aksi = mysqli_escape_string($conn, $_POST['aksi'] ?? ''); // 'terima' atau 'tolak'
+    
+    // Validasi input
+    if (empty($id) || empty($aksi)) {
+        echo json_encode(["status" => "error", "message" => "Data tidak lengkap!"]);
+        exit;
+    }
+    
+    if ($aksi == 'terima') {
+        // Ambil data pendaftar dari tabel daftar
+        $query = "SELECT * FROM daftar WHERE id = '$id'";
+        $result = mysqli_query($conn, $query);
+        
+        if (mysqli_num_rows($result) > 0) {
+            $row = mysqli_fetch_assoc($result);
+            
+            // Update status menjadi 'diterima'
+            $update_query = "UPDATE daftar SET status = 'diterima' WHERE id = '$id'";
+            
+            if (mysqli_query($conn, $update_query)) {
+                echo json_encode(["status" => "success", "message" => "Pendaftaran diterima! Data anggota sudah aktif."]);
+            } else {
+                echo json_encode(["status" => "error", "message" => "Gagal memperbarui status: " . mysqli_error($conn)]);
+            }
+        } else {
+            echo json_encode(["status" => "error", "message" => "Data pendaftar tidak ditemukan!"]);
+        }
+        
+    } elseif ($aksi == 'tolak') {
+        // Update status menjadi 'ditolak'
+        $update_query = "UPDATE daftar SET status = 'ditolak' WHERE id = '$id'";
+        
+        if (mysqli_query($conn, $update_query)) {
+            echo json_encode(["status" => "success", "message" => "Pendaftaran ditolak!"]);
+        } else {
+            echo json_encode(["status" => "error", "message" => "Gagal memperbarui status: " . mysqli_error($conn)]);
+        }
+        
+    } else {
+        echo json_encode(["status" => "error", "message" => "Aksi tidak valid!"]);
+    }
+    
+    exit;
 }
 
-$data = json_decode(file_get_contents("php://input"), true);
-$id = $data['id'] ?? '';
-$aksi = $data['aksi'] ?? ''; // terima atau tolak
-
-if ($aksi == 'terima') {
-    $q = $conn->prepare("SELECT * FROM pendaftaran WHERE id = ?");
-    $q->bind_param("i", $id);
-    $q->execute();
-    $result = $q->get_result();
-    $p = $result->fetch_assoc();
-
-    if ($p) {
-        $insert = $conn->prepare("INSERT INTO anggota (nama, kelas, jabatan, email, tanggal_gabung) VALUES (?, ?, 'anggota', '', NOW())");
-        $insert->bind_param("ss", $p['nama'], $p['kelas']);
-        $insert->execute();
-
-        $update = $conn->prepare("UPDATE pendaftaran SET status = 'diterima' WHERE id = ?");
-        $update->bind_param("i", $id);
-        $update->execute();
-
-        echo json_encode(["success" => true, "message" => "Anggota diterima dan dipindahkan ke tabel anggota."]);
+// GET request - untuk menampilkan daftar pendaftar yang menunggu verifikasi
+if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+    $query = "SELECT * FROM daftar WHERE status = 'pending' ORDER BY tanggal_daftar DESC";
+    $result = mysqli_query($conn, $query);
+    
+    if ($result) {
+        $data = [];
+        while ($row = mysqli_fetch_assoc($result)) {
+            $data[] = $row;
+        }
+        echo json_encode(["status" => "success", "data" => $data]);
     } else {
-        echo json_encode(["success" => false, "message" => "Data tidak ditemukan."]);
+        echo json_encode(["status" => "error", "message" => "Gagal mengambil data: " . mysqli_error($conn)]);
     }
-} elseif ($aksi == 'tolak') {
-    $update = $conn->prepare("UPDATE pendaftaran SET status = 'ditolak' WHERE id = ?");
-    $update->bind_param("i", $id);
-    $update->execute();
-
-    echo json_encode(["success" => true, "message" => "Pendaftaran ditolak."]);
-} else {
-    echo json_encode(["success" => false, "message" => "Aksi tidak valid."]);
+    
+    exit;
 }
 ?>

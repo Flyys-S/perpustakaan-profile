@@ -1,42 +1,50 @@
 <?php
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Headers: Content-Type");
-header("Access-Control-Allow-Methods: POST, OPTIONS");
+// Panggil file koneksi database
+include 'koneksi.php';
 
-include "config.php";
-
-if ($_SERVER["REQUEST_METHOD"] == "OPTIONS") {
-    http_response_code(200);
-    exit();
-}
-
-$nama = $_POST['nama'] ?? '';
-$kelas = $_POST['kelas'] ?? '';
-$alasan = $_POST['alasan'] ?? '';
-$status = 'pending';
-
-// Upload foto (jika ada)
-$foto = '';
-if (!empty($_FILES['foto']['name'])) {
-    $target_dir = "uploads/";
-    if (!file_exists($target_dir)) {
-        mkdir($target_dir, 0777, true);
+// Cek apakah form disubmit dengan method POST
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    
+    // Ambil data dari form
+    $nama = mysqli_escape_string($conn, $_POST['nama'] ?? '');
+    $kelas = mysqli_escape_string($conn, $_POST['kelas'] ?? '');
+    $alasan = mysqli_escape_string($conn, $_POST['alasan'] ?? '');
+    $status = 'pending';
+    
+    // Validasi input wajib
+    if (empty($nama) || empty($kelas) || empty($alasan)) {
+        echo json_encode(["status" => "error", "message" => "Nama, Kelas, dan Alasan wajib diisi!"]);
+        exit;
     }
-    $foto = $target_dir . basename($_FILES["foto"]["name"]);
-    move_uploaded_file($_FILES["foto"]["tmp_name"], $foto);
-}
-
-if ($nama == '' || $kelas == '' || $alasan == '') {
-    echo json_encode(["success" => false, "message" => "Semua kolom wajib diisi."]);
+    
+    // Handle upload foto (jika ada)
+    $foto = '';
+    if (!empty($_FILES['foto']['name'])) {
+        $target_dir = "uploads/";
+        if (!file_exists($target_dir)) {
+            mkdir($target_dir, 0777, true);
+        }
+        
+        // Buat nama file unik
+        $file_ext = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
+        $foto_name = "foto_" . time() . "." . $file_ext;
+        $foto = $target_dir . $foto_name;
+        
+        if (!move_uploaded_file($_FILES['foto']['tmp_name'], $foto)) {
+            echo json_encode(["status" => "error", "message" => "Gagal upload foto!"]);
+            exit;
+        }
+    }
+    
+    // Insert data ke database
+    $insert_query = "INSERT INTO pendaftaran (nama, kelas, alasan, foto, status, tanggal_daftar) 
+                     VALUES ('$nama', '$kelas', '$alasan', '$foto', '$status', NOW())";
+    
+    if (mysqli_query($conn, $insert_query)) {
+        echo json_encode(["status" => "success", "message" => "Pendaftaran berhasil! Tunggu verifikasi dari petugas."]);
+    } else {
+        echo json_encode(["status" => "error", "message" => "Gagal menyimpan data: " . mysqli_error($conn)]);
+    }
     exit;
-}
-
-$stmt = $conn->prepare("INSERT INTO pendaftaran (nama, kelas, alasan, foto, status, tanggal_daftar) VALUES (?, ?, ?, ?, ?, NOW())");
-$stmt->bind_param("sssss", $nama, $kelas, $alasan, $foto, $status);
-
-if ($stmt->execute()) {
-    echo json_encode(["success" => true, "message" => "Pendaftaran berhasil, menunggu verifikasi."]);
-} else {
-    echo json_encode(["success" => false, "message" => "Gagal menyimpan data."]);
 }
 ?>

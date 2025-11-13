@@ -37,16 +37,11 @@
             
             <div id="notif-anggota" class="form-notif"></div>
 
-            <form action="backend/daftar_anggota.php" method="POST" class="data-form">
+            <form id="formAnggota" class="data-form" enctype="multipart/form-data">
                 
                 <div class="form-group">
-                    <label for="nim_nisn">NIM / NISN:</label>
-                    <input type="text" id="nim_nisn" name="nim_nisn" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="nama_lengkap">Nama Lengkap:</label>
-                    <input type="text" id="nama_lengkap" name="nama_lengkap" required>
+                    <label for="nama">Nama Lengkap:</label>
+                    <input type="text" id="nama" name="nama" required>
                 </div>
 
                 <div class="form-group">
@@ -63,13 +58,13 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="email">Email (Opsional):</label>
-                    <input type="email" id="email" name="email">
+                    <label for="alasan">Alasan Pendaftaran:</label>
+                    <textarea id="alasan" name="alasan" rows="4" required placeholder="Jelaskan alasan Anda mendaftar..."></textarea>
                 </div>
                 
                 <div class="form-group">
-                    <label for="telepon">Nomor Telepon (Opsional):</label>
-                    <input type="text" id="telepon" name="telepon">
+                    <label for="foto">Foto Profil (Opsional):</label>
+                    <input type="file" id="foto" name="foto" accept="image/*">
                 </div>
 
                 <button type="submit" class="cta-button">Daftar Sekarang</button>
@@ -98,5 +93,87 @@
     </footer>
 
     <script src="assets/js/main.js"></script>
+    
+    <script>
+        // Handle form daftar anggota
+        document.getElementById('formAnggota').addEventListener('submit', function(e) {
+            e.preventDefault(); // Cegah default form submission
+
+            const nama = document.getElementById('nama').value.trim();
+            const kelas = document.getElementById('kelas').value.trim();
+            const alasan = document.getElementById('alasan').value.trim();
+            const foto = document.getElementById('foto').files[0];
+            const notifDiv = document.getElementById('notif-anggota');
+
+            // Reset notifikasi
+            notifDiv.style.display = 'none';
+            notifDiv.textContent = '';
+            notifDiv.className = 'form-notif';
+
+            // Validasi input wajib
+            if (!nama || !kelas || !alasan) {
+                notifDiv.textContent = 'Nama, Kelas, dan Alasan wajib diisi!';
+                notifDiv.className = 'form-notif error';
+                notifDiv.style.display = 'block';
+                return;
+            }
+
+            // Validasi ukuran foto jika ada
+            if (foto && foto.size > 2 * 1024 * 1024) { // Max 2MB
+                notifDiv.textContent = 'Ukuran foto maksimal 2MB!';
+                notifDiv.className = 'form-notif error';
+                notifDiv.style.display = 'block';
+                return;
+            }
+
+            // Disable button saat loading
+            const submitBtn = document.querySelector('#formAnggota button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sedang mendaftar...';
+
+            // Gunakan FormData untuk upload file
+            const formData = new FormData();
+            formData.append('nama', nama);
+            formData.append('kelas', kelas);
+            formData.append('alasan', alasan);
+            if (foto) {
+                formData.append('foto', foto);
+            }
+
+            // Kirim data ke backend menggunakan fetch
+            fetch('backend/daftar_anggota.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    notifDiv.className = 'form-notif success';
+                    notifDiv.textContent = data.message;
+                    notifDiv.style.display = 'block';
+                    
+                    // Reset form
+                    document.getElementById('formAnggota').reset();
+                    
+                    // Reset button
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Daftar Sekarang';
+                } else {
+                    notifDiv.className = 'form-notif error';
+                    notifDiv.textContent = data.message;
+                    notifDiv.style.display = 'block';
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Daftar Sekarang';
+                }
+            })
+            .catch(error => {
+                notifDiv.className = 'form-notif error';
+                notifDiv.textContent = 'Terjadi kesalahan: ' + error;
+                notifDiv.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Daftar Sekarang';
+            });
+        });
+    </script>
 </body>
 </html>
