@@ -33,7 +33,7 @@ if (!isset($_SESSION['login']) || $_SESSION['login'] !== true) {
                 <a href="backend/logout.php" class="logout">Logout</a>
             </nav>
             <div class="menu-toggle">
-                <button id="theme-toggle" class="theme-button">🌙</button>
+                <button id="theme-toggle" class="theme-button">嫌</button>
                 <button class="hamburger" id="hamburger-menu">
                     <span></span><span></span><span></span>
                 </button>
@@ -48,28 +48,28 @@ if (!isset($_SESSION['login']) || $_SESSION['login'] !== true) {
             <div class="admin-dashboard">
                 
                 <div class="admin-card">
-                    <span class="admin-icon">👥</span>
+                    <span class="admin-icon">則</span>
                     <h2>Total Anggota</h2>
                     <p>850 Orang</p>
                     <a href="#data-anggota" class="cta-button">Lihat Data</a>
                 </div>
 
                 <div class="admin-card">
-                    <span class="admin-icon">📚</span>
+                    <span class="admin-icon">答</span>
                     <h2>Total Koleksi</h2>
                     <p>4.200 Judul</p>
                     <a href="#data-buku" class="cta-button">Kelola Buku</a>
                 </div>
 
                 <div class="admin-card">
-                    <span class="admin-icon">📝</span>
+                    <span class="admin-icon">統</span>
                     <h2>Buku Dipinjam</h2>
                     <p>125 Eksemplar</p>
                     <a href="#" class="cta-button">Mulai Transaksi</a>
                 </div>
 
                 <div class="admin-card">
-                    <span class="admin-icon">💲</span>
+                    <span class="admin-icon">調</span>
                     <h2>Denda Terkumpul</h2>
                     <p>Rp 750.000</p>
                     <a href="#" class="cta-button">Lihat Laporan</a>
@@ -107,6 +107,8 @@ if (!isset($_SESSION['login']) || $_SESSION['login'] !== true) {
         </section>
 
         <hr class="container page-divider">
+
+        <section class="container page-section pt-0" id="data-anggota">
             <h2 class="section-title">Daftar Anggota Perpustakaan</h2>
             
             <div class="form-add-button">
@@ -126,34 +128,9 @@ if (!isset($_SESSION['login']) || $_SESSION['login'] !== true) {
                         </tr>
                     </thead>
                     <tbody id="tabel-anggota-body">
-                        <tr>
-                            <td>1234567890</td>
-                            <td>Budi Santoso</td>
-                            <td>XII IPA 2</td>
-                            <td>budi@mail.com</td>
-                            <td>2024-01-15</td>
-                            <td><a href="#">Edit</a> | <a href="#">Hapus</a></td>
-                        </tr>
-                        <tr>
-                            <td>20230001</td>
-                            <td>Siti Fatimah</td>
-                            <td>Guru</td>
-                            <td>siti.f@sch.id</td>
-                            <td>2023-08-20</td>
-                            <td><a href="#">Edit</a> | <a href="#">Hapus</a></td>
-                        </tr>
-                        <tr>
-                            <td>1011223344</td>
-                            <td>Ahmad Riyadi</td>
-                            <td>X MIA 1</td>
-                            <td>ahmad@mail.com</td>
-                            <td>2024-02-28</td>
-                            <td><a href="#">Edit</a> | <a href="#">Hapus</a></td>
-                        </tr>
-                    </tbody>
+                        </tbody>
                 </table>
             </div>
-            
         </section>
         
         <hr class="container page-divider">
@@ -179,34 +156,7 @@ if (!isset($_SESSION['login']) || $_SESSION['login'] !== true) {
                         </tr>
                     </thead>
                     <tbody id="tabel-buku-body">
-                        <tr>
-                            <td>978-602-03-3295-8</td>
-                            <td>Laskar Pelangi</td>
-                            <td>Andrea Hirata</td>
-                            <td>Bentang Pustaka</td>
-                            <td>2005</td>
-                            <td>15</td>
-                            <td><a href="#">Edit</a> | <a href="#">Hapus</a></td>
-                        </tr>
-                        <tr>
-                            <td>978-979-91-0168-9</td>
-                            <td>The Secret</td>
-                            <td>Rhonda Byrne</td>
-                            <td>Gramedia</td>
-                            <td>2006</td>
-                            <td>8</td>
-                            <td><a href="#">Edit</a> | <a href="#">Hapus</a></td>
-                        </tr>
-                        <tr>
-                            <td>KB003</td>
-                            <td>Fisika Modern Jilid 1</td>
-                            <td>Dr. Yanto</td>
-                            <td>Erlangga</td>
-                            <td>2020</td>
-                            <td>22</td>
-                            <td><a href="#">Edit</a> | <a href="#">Hapus</a></td>
-                        </tr>
-                    </tbody>
+                        </tbody>
                 </table>
             </div>
             
@@ -228,23 +178,27 @@ if (!isset($_SESSION['login']) || $_SESSION['login'] !== true) {
     <script src="assets/js/main.js"></script>
     
     <script>
+        // === FUNGSI YANG SUDAH ADA (VERIFIKASI) ===
+
         // Load data pendaftar yang menunggu verifikasi
         function loadVerifikasiAnggota() {
-            fetch('backend/verifikasi_anggota.php')
+            const tbody = document.getElementById('tabel-verifikasi-body');
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px;">Memuat data pendaftar...</td></tr>';
+            
+            fetch('backend/verifikasi_anggota.php') // Ini adalah request GET
                 .then(response => response.json())
                 .then(data => {
-                    const tbody = document.getElementById('tabel-verifikasi-body');
-                    
                     if (data.status === 'success' && data.data.length > 0) {
                         tbody.innerHTML = '';
                         data.data.forEach(item => {
                             const row = document.createElement('tr');
+                            // Perbaikan path foto: tambahkan "backend/"
                             row.innerHTML = `
                                 <td>${item.nama}</td>
                                 <td>${item.kelas}</td>
                                 <td>${item.alasan}</td>
                                 <td>
-                                    ${item.foto ? `<a href="${item.foto}" target="_blank">Lihat</a>` : '-'}
+                                    ${item.foto ? `<a href="backend/${item.foto}" target="_blank">Lihat</a>` : '-'}
                                 </td>
                                 <td>${item.tanggal_daftar}</td>
                                 <td>
@@ -260,7 +214,7 @@ if (!isset($_SESSION['login']) || $_SESSION['login'] !== true) {
                 })
                 .catch(error => {
                     console.error('Error loading verifikasi data:', error);
-                    document.getElementById('tabel-verifikasi-body').innerHTML = 
+                    tbody.innerHTML = 
                         '<tr><td colspan="6" style="text-align: center; padding: 20px; color: red;">Gagal memuat data</td></tr>';
                 });
         }
@@ -277,7 +231,7 @@ if (!isset($_SESSION['login']) || $_SESSION['login'] !== true) {
             formData.append('id', id);
             formData.append('aksi', aksi);
 
-            fetch('backend/verifikasi_anggota.php', {
+            fetch('backend/verifikasi_anggota.php', { // Ini adalah request POST
                 method: 'POST',
                 body: formData
             })
@@ -290,7 +244,11 @@ if (!isset($_SESSION['login']) || $_SESSION['login'] !== true) {
                     
                     // Reload data setelah 1 detik
                     setTimeout(() => {
-                        loadVerifikasiAnggota();
+                        loadVerifikasiAnggota(); // Muat ulang tabel verifikasi
+                        // Perbaikan: Muat ulang juga tabel anggota aktif
+                        if (aksi === 'terima') {
+                            loadDataAnggota(); 
+                        }
                         notifDiv.style.display = 'none';
                     }, 1500);
                 } else {
@@ -300,15 +258,89 @@ if (!isset($_SESSION['login']) || $_SESSION['login'] !== true) {
                 }
             })
             .catch(error => {
-                notifDiv.className = 'form-notif error';
+                notifDiv.className = 'form-notf error';
                 notifDiv.textContent = 'Terjadi kesalahan: ' + error;
                 notifDiv.style.display = 'block';
             });
         }
 
-        // Load data verifikasi saat halaman dimuat
+        // === FUNGSI BARU UNTUK MEMUAT TABEL ANGGOTA AKTIF ===
+        function loadDataAnggota() {
+            const tbody = document.getElementById('tabel-anggota-body');
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px;">Memuat data anggota...</td></tr>';
+            
+            fetch('backend/anggota.php') // Memanggil endpoint anggota
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success' && data.data.length > 0) {
+                        tbody.innerHTML = ''; // Kosongkan
+                        data.data.forEach(item => {
+                            const row = document.createElement('tr');
+                            // Sesuaikan kolom ini dengan struktur tabel 'anggota' Anda
+                            row.innerHTML = `
+                                <td>${item.id}</td> 
+                                <td>${item.nama}</td>
+                                <td>${item.kelas}</td>
+                                <td>${item.email || '-'}</td>
+                                <td>${item.tanggal_bergabung || 'N/A'}</td>
+                                <td><a href="#">Edit</a> | <a href="#">Hapus</a></td>
+                            `;
+                            tbody.appendChild(row);
+                        });
+                    } else if (data.status === 'success') {
+                        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px;">Belum ada anggota yang terdaftar.</td></tr>';
+                    } else {
+                        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 20px; color: red;">${data.message}</td></tr>`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading data anggota:', error);
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px; color: red;">Gagal memuat data anggota</td></tr>';
+                });
+        }
+
+        // === FUNGSI BARU UNTUK MEMUAT TABEL BUKU ===
+        function loadDataBuku() {
+            const tbody = document.getElementById('tabel-buku-body');
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px;">Memuat data buku...</td></tr>';
+            
+            fetch('backend/api.php') // Memanggil endpoint buku (GET)
+                .then(response => response.json())
+                .then(data => {
+                    // Endpoint api.php Anda mengembalikan array langsung
+                    if (Array.isArray(data) && data.length > 0) {
+                        tbody.innerHTML = ''; // Kosongkan
+                        data.forEach(item => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${item.isbn || item.nomor_buku}</td>
+                                <td>${item.judul}</td>
+                                <td>${item.pengarang}</td>
+                                <td>${item.penerbit}</td>
+                                <td>${item.tahun_terbit}</td>
+                                <td>${item.stok || '1'}</td>
+                                <td><a href="#">Edit</a> | <a href="#">Hapus</a></td>
+                            `;
+                            tbody.appendChild(row);
+                        });
+                    } else if (Array.isArray(data)) {
+                        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px;">Belum ada data buku di inventaris.</td></tr>';
+                    } else {
+                        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 20px; color: red;">Format data salah</td></tr>`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading data buku:', error);
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px; color: red;">Gagal memuat data buku</td></tr>';
+                });
+        }
+
+
+        // Load semua data saat halaman dimuat
         document.addEventListener('DOMContentLoaded', function() {
-            loadVerifikasiAnggota();
+            loadVerifikasiAnggota(); // Memuat data verifikasi
+            loadDataAnggota();       // Memuat data anggota
+            loadDataBuku();          // Memuat data buku
         });
     </script>
     

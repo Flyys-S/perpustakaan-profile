@@ -1,22 +1,28 @@
 <?php
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Headers: Content-Type");
-header("Access-Control-Allow-Methods: GET, OPTIONS");
+// Panggil file koneksi database
+include 'koneksi.php'; // <-- INI YANG DIPERBAIKI (sebelumnya config.php)
 
-include "config.php";
-
-if ($_SERVER["REQUEST_METHOD"] == "OPTIONS") {
-    http_response_code(200);
-    exit();
+// Cek apakah request adalah GET
+if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+    
+    $query = "SELECT * FROM anggota ORDER BY id DESC";
+    $result = mysqli_query($conn, $query);
+    
+    if ($result) {
+        $data = [];
+        while ($row = mysqli_fetch_assoc($result)) {
+            $data[] = $row;
+        }
+        // Kirim data sebagai JSON
+        echo json_encode(["status" => "success", "data" => $data]);
+    } else {
+        echo json_encode(["status" => "error", "message" => "Gagal mengambil data: " . mysqli_error($conn)]);
+    }
+    
+    exit;
+} else {
+    // Jika bukan GET, kirim error
+    echo json_encode(["status" => "error", "message" => "Metode request harus GET"]);
+    exit;
 }
-
-$sql = "SELECT * FROM anggota ORDER BY id DESC";
-$result = $conn->query($sql);
-
-$anggota = [];
-while ($row = $result->fetch_assoc()) {
-    $anggota[] = $row;
-}
-
-echo json_encode($anggota);
 ?>
