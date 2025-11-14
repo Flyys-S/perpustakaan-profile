@@ -48,28 +48,28 @@ if (!isset($_SESSION['login']) || $_SESSION['login'] !== true) {
             <div class="admin-dashboard">
                 
                 <div class="admin-card">
-                    <span class="admin-icon">則</span>
+                    <span class="admin-icon">👥</span>
                     <h2>Total Anggota</h2>
                     <p>850 Orang</p>
                     <a href="#data-anggota" class="cta-button">Lihat Data</a>
                 </div>
 
                 <div class="admin-card">
-                    <span class="admin-icon">答</span>
+                    <span class="admin-icon">📚</span>
                     <h2>Total Koleksi</h2>
                     <p>4.200 Judul</p>
                     <a href="#data-buku" class="cta-button">Kelola Buku</a>
                 </div>
 
                 <div class="admin-card">
-                    <span class="admin-icon">統</span>
+                    <span class="admin-icon">📝</span>
                     <h2>Buku Dipinjam</h2>
                     <p>125 Eksemplar</p>
                     <a href="#" class="cta-button">Mulai Transaksi</a>
                 </div>
 
                 <div class="admin-card">
-                    <span class="admin-icon">調</span>
+                    <span class="admin-icon">💲</span>
                     <h2>Denda Terkumpul</h2>
                     <p>Rp 750.000</p>
                     <a href="#" class="cta-button">Lihat Laporan</a>
