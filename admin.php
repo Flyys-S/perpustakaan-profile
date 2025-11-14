@@ -30,7 +30,7 @@ if (!isset($_SESSION['login']) || $_SESSION['login'] !== true) {
                 <a href="#data-anggota">Anggota</a>
                 <a href="#data-buku">Buku</a>
                 <a href="#">Peminjaman</a>
-                <a href="backend/logout.php" class="logout">Logout</a>
+                <a href="login.html" class="logout">Logout</a>
             </nav>
             <div class="menu-toggle">
                 <button id="theme-toggle" class="theme-button">嫌</button>
