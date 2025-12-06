@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Input Berita Baru</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">Admin Panel</a>
+            <nav class="nav-links"><a href="admin.php">Kembali ke Dashboard</a></nav>
+        </div>
+    </header>
+
+    <main class="page-section">
+        <div class="container">
+            <h1 class="page-title">Tulis Berita / Acara</h1>
+            <div id="notif" class="form-notif"></div>
+
+            <form id="formBerita" class="data-form">
+                <div class="form-group">
+                    <label>Judul Acara:</label>
+                    <input type="text" name="judul" required placeholder="Contoh: Lomba Membaca Puisi">
+                </div>
+                
+                <div class="form-group">
+                    <label>Tanggal Pelaksanaan:</label>
+                    <input type="date" name="tanggal" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Penulis / Penanggung Jawab:</label>
+                    <input type="text" name="penulis" value="Tim Perpustakaan">
+                </div>
+
+                <div class="form-group">
+                    <label>Gambar Utama:</label>
+                    <input type="file" name="gambar" accept="image/*" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Deskripsi Singkat (Muncul di Kartu Depan):</label>
+                    <textarea name="deskripsi" rows="2" maxlength="150" placeholder="Maksimal 150 karakter..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Isi Lengkap (Muncul di Popup):</label>
+                    <textarea name="isi" rows="6" placeholder="Jelaskan detail acara selengkapnya di sini..."></textarea>
+                </div>
+
+                <button type="submit" class="cta-button">Terbitkan Berita</button>
+            </form>
+        </div>
+    </main>
+
+    <script src="../assets/js/main.js"></script>
+    <script>
+        document.getElementById('formBerita').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const fd = new FormData(this);
+            const notif = document.getElementById('notif');
+            
+            fetch('../backend/berita.php', { method: 'POST', body: fd })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    notif.className = 'form-notif success';
+                    notif.textContent = data.message;
+                    notif.style.display = 'block';
+                    this.reset();
+                    setTimeout(() => window.location.href = 'admin.php', 1500);
+                } else {
+                    alert(data.message);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

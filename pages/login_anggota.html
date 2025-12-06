@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Anggota - Perpustakaan</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <img src="../assets/picture/logo.png" alt="Logo" class="logo-img">
+                Perpustakaan SMAN 8
+            </a>
+            <div class="menu-toggle"><button id="theme-toggle" class="theme-button">🌙</button></div>
+        </div>
+    </header>
+
+    <main class="page-section">
+        <div class="login-card" style="margin: 0 auto;">
+            <h1>Login Anggota</h1>
+            <p style="margin-bottom: 20px; color: gray;">Masuk menggunakan NISN dan Password.</p>
+            
+            <form id="formLoginAnggota">
+                <div class="form-group">
+                    <label for="nisn">NISN:</label>
+                    <input type="number" id="nisn" name="nisn" required placeholder="Masukkan NISN">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required placeholder="Masukkan Password">
+                </div>
+                <div id="login-notif" class="form-notif error" style="display: none;"></div>
+                <button type="submit" class="cta-button">Masuk</button>
+            </form>
+            <a href="index.html" class="back-link">← Kembali ke Beranda</a>
+        </div>
+    </main>
+
+    <script src="../assets/js/main.js"></script>
+    <script>
+        // Script Khusus Login Anggota
+        document.getElementById('formLoginAnggota').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const submitBtn = this.querySelector('button');
+            const notif = document.getElementById('login-notif');
+            const formData = new FormData(this);
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Memeriksa...';
+            notif.style.display = 'none';
+
+            fetch('../backend/cek_login_anggota.php', {
+                method: 'POST', body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === 'success'){
+                    notif.className = 'form-notif success';
+                    notif.textContent = data.message;
+                    notif.style.display = 'block';
+                    setTimeout(() => { window.location.href = 'member.php'; }, 1000);
+                } else {
+                    notif.className = 'form-notif error';
+                    notif.textContent = data.message;
+                    notif.style.display = 'block';
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Masuk';
+                }
+            })
+            .catch(err => {
+                notif.style.display = 'block';
+                notif.textContent = 'Error koneksi';
+                submitBtn.disabled = false;
+            });
+        });
+    </script>
+</body>
+</html>

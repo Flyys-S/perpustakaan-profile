@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Buku</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo"><img src="../assets/picture/logo.png" class="logo-img"> Edit Buku</a>
+            <nav class="nav-links"><a href="admin.php">Kembali ke Dashboard</a></nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="container page-section">
+            <h1 class="page-title">Edit Data Buku</h1>
+            <div id="notif-buku" class="form-notif"></div>
+
+            <form id="formEditBuku" class="data-form">
+                <input type="hidden" name="id" id="id_buku">
+                <input type="hidden" name="aksi" value="update">
+
+                <div id="preview-container" style="text-align: center; margin-bottom: 20px; display: none;">
+                    <label>Cover Saat Ini:</label><br>
+                    <img id="preview-cover" src="" style="max-width: 150px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-top:10px;">
+                </div>
+
+                <div class="form-group"><label>Judul Buku:</label><input type="text" id="judul" name="judul" required></div>
+                
+                <div class="form-group">
+                    <label>Ganti Cover (Biarkan kosong jika tidak ingin mengubah):</label>
+                    <input type="file" name="cover" accept="image/*">
+                </div>
+
+                <div class="form-group"><label>Anak Judul:</label><input type="text" id="anak_judul" name="anak_judul"></div>
+                
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
+                    <div class="form-group"><label>Nomor buku:</label><input type="text" id="nomor_buku" name="nomor_buku"></div>
+                    <div class="form-group"><label>ISBN:</label><input type="text" id="isbn" name="isbn"></div>
+                </div>
+
+                <div class="form-group"><label>Pengarang:</label><input type="text" id="pengarang" name="pengarang"></div>
+                <div class="form-group"><label>Penerbit:</label><input type="text" id="penerbit" name="penerbit"></div>
+                
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
+                    <div class="form-group"><label>Tahun Terbit:</label><input type="number" id="tahun_terbit" name="tahun_terbit"></div>
+                    <div class="form-group"><label>Jumlah Stok:</label><input type="number" id="stok" name="stok" required></div>
+                </div>
+
+                <div class="form-group"><label>Sumber Buku:</label><input type="text" id="sumber_buku" name="sumber_buku"></div>
+                <div class="form-group"><label>Kategori:</label><input type="text" id="kategori" name="kategori"></div>
+                <div class="form-group"><label>Bahasa:</label><input type="text" id="bahasa" name="bahasa"></div>
+
+                <button type="submit" class="cta-button">Simpan Perubahan</button>
+            </form>
+        </section>
+    </main>
+
+    <script src="../assets/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id');
+
+            if (!id) { alert("ID tidak ditemukan!"); window.location.href = 'admin.php'; return; }
+
+            // Fetch Data
+            fetch(`../backend/api.php?id=${id}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data) {
+                        document.getElementById('id_buku').value = data.id;
+                        document.getElementById('judul').value = data.judul;
+                        document.getElementById('anak_judul').value = data.anak_judul;
+                        document.getElementById('nomor_buku').value = data.nomor_buku;
+                        document.getElementById('pengarang').value = data.pengarang;
+                        document.getElementById('penerbit').value = data.penerbit;
+                        document.getElementById('tahun_terbit').value = data.tahun_terbit;
+                        document.getElementById('sumber_buku').value = data.sumber_buku;
+                        document.getElementById('isbn').value = data.isbn;
+                        document.getElementById('kategori').value = data.kategori;
+                        document.getElementById('bahasa').value = data.bahasa;
+                        document.getElementById('stok').value = data.stok;
+
+                        // Tampilkan Preview Cover jika ada
+                        if (data.cover) {
+                            const preview = document.getElementById('preview-cover');
+                            const container = document.getElementById('preview-container');
+                            preview.src = `../backend/uploads/${data.cover}`;
+                            container.style.display = 'block';
+                        }
+                    }
+                });
+
+            // Handle Submit
+            document.getElementById('formEditBuku').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                const notif = document.getElementById('notif-buku');
+                const btn = this.querySelector('button');
+
+                btn.disabled = true; btn.textContent = 'Menyimpan...';
+
+                fetch('../backend/api.php', { method: 'POST', body: formData })
+                .then(res => res.json())
+                .then(data => {
+                    notif.style.display = 'block';
+                    if (data.status === 'success') {
+                        notif.className = 'form-notif success';
+                        notif.textContent = data.message;
+                        setTimeout(() => { window.location.href = 'admin.php'; }, 1000);
+                    } else {
+                        notif.className = 'form-notif error';
+                        notif.textContent = data.message;
+                        btn.disabled = false;
+                        btn.textContent = 'Simpan Perubahan';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

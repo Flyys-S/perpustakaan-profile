@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Anggota - Perpustakaan</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <img src="../assets/picture/logo.png" class="logo-img"> Edit Anggota
+            </a>
+            <nav class="nav-links">
+                <a href="admin.php">Kembali ke Dashboard</a>
+            </nav>
+            <div class="menu-toggle"><button id="theme-toggle" class="theme-button">🌙</button></div>
+        </div>
+    </header>
+
+    <main>
+        <section class="container page-section">
+            <h1 class="page-title">Edit Data Anggota</h1>
+            <div id="notif-edit" class="form-notif"></div>
+
+            <form id="formEditAnggota" class="data-form">
+                <input type="hidden" name="id" id="id_anggota">
+                <input type="hidden" name="aksi" value="update">
+
+                <div class="form-group">
+                    <label for="nisn">NISN:</label>
+                    <input type="number" id="nisn" name="nisn" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="nama">Nama Lengkap:</label>
+                    <input type="text" id="nama" name="nama" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="kelas">Kelas:</label>
+                    <select id="kelas" name="kelas" required>
+                        <option value="">-- Pilih Kelas --</option>
+                        <option value="X MIA 1">X MIA 1</option>
+                        <option value="X MIA 2">X MIA 2</option>
+                        <option value="XI IIS 1">XI IIS 1</option>
+                        <option value="XII IPA 2">XII IPA 2</option>
+                        <option value="Guru">Guru</option>
+                        <option value="Staf">Staf</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="cta-button">Simpan Perubahan</button>
+            </form>
+        </section>
+    </main>
+
+    <script src="../assets/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 1. Ambil ID dari URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id');
+
+            if (!id) {
+                alert("ID Anggota tidak ditemukan!");
+                window.location.href = 'admin.php';
+                return;
+            }
+
+            // 2. Fetch Data Anggota & Isi Form
+            fetch(`../backend/anggota.php?id=${id}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data) {
+                        document.getElementById('id_anggota').value = data.id;
+                        document.getElementById('nisn').value = data.nisn || '';
+                        document.getElementById('nama').value = data.nama;
+                        document.getElementById('kelas').value = data.kelas;
+                    }
+                });
+
+            // 3. Handle Submit
+            document.getElementById('formEditAnggota').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                const notif = document.getElementById('notif-edit');
+                const btn = this.querySelector('button');
+
+                btn.disabled = true;
+                btn.textContent = 'Menyimpan...';
+
+                fetch('../backend/anggota.php', { method: 'POST', body: formData })
+                .then(res => res.json())
+                .then(data => {
+                    notif.style.display = 'block';
+                    if (data.status === 'success') {
+                        notif.className = 'form-notif success';
+                        notif.textContent = data.message;
+                        setTimeout(() => { window.location.href = 'admin.php'; }, 1000);
+                    } else {
+                        notif.className = 'form-notif error';
+                        notif.textContent = data.message;
+                        btn.disabled = false;
+                        btn.textContent = 'Simpan Perubahan';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

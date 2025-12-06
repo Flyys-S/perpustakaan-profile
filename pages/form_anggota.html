@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Anggota - Perpustakaan Kita</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <img src="../assets/picture/logo.png" alt="Logo Perpustakaan" class="logo-img">
+                Perpustakaan SMAN 8 Tangerang Selatan
+            </a>
+
+            <nav class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="berita.html">Berita</a>
+                <a href="galeri.html">Galeri</a>
+                <a href="tentang.html">Tentang</a>
+                <a href="login.html">Login</a>
+            </nav>
+            <div class="menu-toggle">
+                <button id="theme-toggle" class="theme-button">🌙</button>
+                <button class="hamburger" id="hamburger-menu"><span></span><span></span><span></span></button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="container page-section">
+            <h1 class="page-title">Formulir Pendaftaran Anggota</h1>
+            <div id="notif-anggota" class="form-notif"></div>
+
+            <form id="formAnggota" class="data-form" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="nama">Nama Lengkap:</label>
+                    <input type="text" id="nama" name="nama" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="nisn">NISN (Nomor Induk Siswa Nasional):</label>
+                    <input type="number" id="nisn" name="nisn" required placeholder="Contoh: 0054321..." autocomplete="off">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password (Untuk Login):</label>
+                    <input type="password" id="password" name="password" required placeholder="Buat password rahasia..." autocomplete="new-password">
+                </div>
+                
+                <div class="form-group">
+                    <label for="kelas">Kelas/Jabatan:</label>
+                    <select id="kelas" name="kelas" required>
+                        <option value="">-- Pilih Kelas/Jabatan --</option>
+                        <option value="X MIA 1">X MIA 1</option>
+                        <option value="X MIA 2">X MIA 2</option>
+                        <option value="Guru">Guru</option>
+                        <option value="Staf">Staf</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="alasan">Alasan Pendaftaran:</label>
+                    <textarea id="alasan" name="alasan" rows="4" required placeholder="Jelaskan alasan..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="foto">Foto Profil (Opsional):</label>
+                    <input type="file" id="foto" name="foto" accept="image/*">
+                </div>
+                <button type="submit" class="cta-button">Daftar Sekarang</button>
+            </form>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-center">
+            <h3>SMA Negeri 8 Tangerang Selatan</h3>
+            <p>Sistem Informasi Perpustakaan | Hak Cipta &copy; 2025</p>
+        </div>
+    </footer>
+
+    <script src="../assets/js/main.js"></script>
+    
+    <script>
+        document.getElementById('formAnggota').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const notifDiv = document.getElementById('notif-anggota');
+            const submitBtn = document.querySelector('#formAnggota button[type="submit"]');
+            const formData = new FormData(this);
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sedang mendaftar...';
+
+            fetch('../backend/daftar_anggota.php', {
+                method: 'POST', body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    notifDiv.className = 'form-notif success';
+                    notifDiv.textContent = data.message;
+                    notifDiv.style.display = 'block';
+                    this.reset();
+                } else {
+                    notifDiv.className = 'form-notif error';
+                    notifDiv.textContent = data.message;
+                    notifDiv.style.display = 'block';
+                }
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Daftar Sekarang';
+            })
+            .catch(err => {
+                notifDiv.className = 'form-notif error';
+                notifDiv.textContent = 'Terjadi kesalahan: ' + err;
+                notifDiv.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Daftar Sekarang';
+            });
+        });
+    </script>
+</body>
+</html>

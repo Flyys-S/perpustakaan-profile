@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perpustakaan SMAN 8 Tangerang Selatan</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <img src="../assets/picture/logo.png" alt="Logo" class="logo-img">
+                Perpustakaan SMAN 8
+            </a>
+
+            <nav class="nav-links">
+                <a href="index.html" class="active">Home</a>
+                <a href="berita.html">Berita</a>
+                <a href="galeri.html">Galeri</a>
+                <a href="tentang.html">Tentang</a>
+                
+                <div class="dropdown">
+                    <a href="#" class="dropbtn">
+                        Account <span class="arrow-down">▼</span>
+                    </a>
+                    <div class="dropdown-content">
+                        <a href="form_anggota.html">👤 Daftar Anggota</a>
+                        <a href="login_anggota.html">🔑 Login Anggota</a>
+                        <a href="login.html">🔐 Login Petugas</a>
+                    </div>
+                </div>
+            </nav>
+            <div class="menu-toggle">
+                <button id="theme-toggle" class="theme-button">🌙</button>
+                <button class="hamburger" id="hamburger-menu"><span></span><span></span><span></span></button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-overlay"></div>
+            <div class="container hero-content">
+                <h1>Selamat Datang di Website Perpustakaan SMAN 8</h1>
+                <p>Jendela Anda menuju dunia pengetahuan. Jelajahi koleksi kami dan temukan petualangan baru.</p>
+                <a href="berita.html" class="cta-button">Jelajahi Koleksi</a>
+            </div>
+        </section>
+
+        <section class="container page-section">
+            <h2 class="section-title">Berita & Acara Terbaru</h2>
+            
+            <div id="latest-news-container" class="card-grid">
+                <p style="text-align: center; grid-column: 1/-1;">Memuat berita terbaru...</p>
+            </div>
+
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="berita.html" class="cta-button secondary">Lihat Semua Berita</a>
+            </div>
+        </section>
+    </main>
+
+    <div id="news-modal-overlay" class="modal-overlay">
+        <div class="modal-content">
+            <button id="modal-close-btn" class="modal-close">&times;</button>
+            <img id="modal-img" src="" alt="Detail Berita">
+            <div class="modal-text-content">
+                <div class="modal-meta">
+                    <span id="modal-date"></span>
+                    <span id="modal-author"></span>
+                </div>
+                <h2 id="modal-title"></h2>
+                <p id="modal-text" style="white-space: pre-line;"></p>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container footer-center">
+            <h3>SMA Negeri 8 Tangerang Selatan</h3>
+            <p>Jl. Cireundeu Raya No. 5 Ciputat Timur</p>
+            <p>Email: <a href="mailto:libraryclubdelta@gmail.com">libraryclubdelta@gmail.com</a></p>
+            <div class="social-links">
+                <a href="#" aria-label="Instagram">
+                    <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/instagram.svg" alt="Instagram">
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../assets/js/main.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.getElementById('latest-news-container');
+            const today = new Date();
+            today.setHours(0,0,0,0); // Reset jam agar akurat
+
+            fetch('../backend/berita.php')
+                .then(res => res.json())
+                .then(data => {
+                    container.innerHTML = '';
+                    let count = 0;
+                    const maxItems = 3; // Batasi tampilkan 3 berita saja
+
+                    if (data.length > 0) {
+                        data.forEach(item => {
+                            const eventDate = new Date(item.tanggal);
+                            
+                            // FILTER: Hanya tampilkan jika Tanggal >= Hari Ini
+                            // DAN jumlah belum melebihi batas (3)
+                            if (eventDate >= today && count < maxItems) {
+                                
+                                const imgPath = item.gambar ? `../backend/uploads/${item.gambar}` : `../assets/picture/1.jpg`;
+                                
+                                container.innerHTML += `
+                                    <div class="card">
+                                        <img src="${imgPath}" class="card-img-top">
+                                        <div class="card-content">
+                                            <div class="card-meta">
+                                                <span>📅 ${item.tanggal}</span>
+                                            </div>
+                                            <h3>${item.judul}</h3>
+                                            <p>${item.deskripsi}</p>
+                                            <a href="#" class="card-link open-modal-btn" 
+                                               data-img-src="${imgPath}"
+                                               data-title="${item.judul}"
+                                               data-date="${item.tanggal}"
+                                               data-author="${item.penulis}"
+                                               data-full-text="${item.isi_full}">
+                                               Baca Selengkapnya
+                                            </a>
+                                        </div>
+                                    </div>
+                                `;
+                                count++;
+                            }
+                        });
+
+                        // Jika setelah difilter tidak ada berita
+                        if (count === 0) {
+                            container.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Belum ada acara mendatang.</p>';
+                        } else {
+                            // Aktifkan Modal untuk elemen yang baru dibuat
+                            attachModalEvents();
+                        }
+
+                    } else {
+                        container.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Belum ada berita.</p>';
+                    }
+                })
+                .catch(err => {
+                    container.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Gagal memuat berita.</p>';
+                });
+        });
+
+        // Fungsi manual aktifkan modal (Karena elemen dibuat dinamis oleh JS)
+        function attachModalEvents() {
+            const modalOverlay = document.getElementById('news-modal-overlay');
+            const btns = document.querySelectorAll('.open-modal-btn');
+            
+            btns.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.getElementById('modal-img').src = this.dataset.imgSrc;
+                    document.getElementById('modal-title').innerText = this.dataset.title;
+                    document.getElementById('modal-text').innerText = this.dataset.fullText;
+                    document.getElementById('modal-date').innerText = "📅 " + this.dataset.date;
+                    document.getElementById('modal-author').innerText = "👤 " + this.dataset.author;
+                    modalOverlay.classList.add('active');
+                });
+            });
+        }
+    </script>
+</body>
+</html>

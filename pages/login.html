@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Petugas - Perpustakaan SMAN 8</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 
 <body>
@@ -12,48 +12,40 @@
     <header class="navbar">
         <div class="container">
             <a href="index.html" class="logo">
-                <img src="assets/picture/logo.png" alt="Logo Perpustakaan" class="logo-img">
+                <img src="../assets/picture/logo.png" alt="Logo Perpustakaan" class="logo-img">
                 Perpustakaan SMAN 8 Tangerang Selatan
             </a>
             
             <div class="menu-toggle">
                 <button id="theme-toggle" class="theme-button">🌙</button>
-                <button class="hamburger" id="hamburger-menu">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
             </div>
         </div>
     </header>
     <main class="page-section">
         
         <div class="login-card" style="margin: 0 auto;">
-            
             <h1>Login Petugas</h1>
-
             <form id="loginAdmin" method="POST">
                 
                 <div class="form-group">
                     <label for="username">Username:</label>
-                    <input type="text" id="username" name="username" required placeholder="Masukkan username Anda">
+                    <input type="text" id="username" name="username" required placeholder="Masukkan username">
                 </div>
 
                 <div class="form-group">
                     <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" required placeholder="Masukkan password Anda">
+                    <input type="password" id="password" name="password" required placeholder="Masukkan password">
                 </div>
 
                 <div id="form-notif-error" class="form-notif error" style="display: none;"></div>
 
                 <button id="LoginAdmin" type="submit" class="cta-button">Masuk ke Admin</button>
-                </form>
+            </form>
 
             <a href="index.html" class="back-link">← Kembali ke Beranda</a>
         </div>
     </main>
 
-    <script src="assets/js/main.js"></script>
-
+    <script src="../assets/js/main.js"></script>
 </body>
 </html>

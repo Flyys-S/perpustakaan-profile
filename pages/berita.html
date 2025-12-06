@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Berita - Perpustakaan Kita</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="container">
+           <a href="index.html" class="logo">
+                <img src="../assets/picture/logo.png" alt="Logo" class="logo-img">
+                Perpustakaan SMAN 8
+            </a>
+            <nav class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="berita.html" class="active">Berita</a>
+                <a href="galeri.html">Galeri</a>
+                <a href="tentang.html">Tentang</a>
+                <div class="dropdown">
+                    <a href="#" class="dropbtn">Account <span class="arrow-down">▼</span></a>
+                    <div class="dropdown-content">
+                        <a href="form_anggota.html">👤 Daftar Anggota</a>
+                        <a href="login.html">🔐 Login Petugas</a>
+                    </div>
+                </div>
+            </nav>
+            <div class="menu-toggle"><button id="theme-toggle" class="theme-button">🌙</button></div>
+        </div>
+    </header>
+
+    <main>
+        <section class="container page-section">
+            <h1 class="page-title">Berita & Acara</h1>
+
+            <h2 class="section-subtitle">📅 Sedang Berlangsung & Mendatang</h2>
+            <div id="upcoming-container" class="card-grid">
+                <p>Memuat berita...</p>
+            </div> 
+
+            <hr class="page-divider">
+
+            <h2 class="section-subtitle">🗄️ Arsip Acara Terdahulu</h2>
+            <div id="past-container" class="card-grid">
+                <p>Memuat arsip...</p>
+            </div> 
+        </section>
+    </main>
+
+    <div id="news-modal-overlay" class="modal-overlay">
+        <div class="modal-content">
+            <button id="modal-close-btn" class="modal-close">&times;</button>
+            <img id="modal-img" src="" alt="Detail Berita">
+            <div class="modal-text-content">
+                <div class="modal-meta">
+                    <span id="modal-date"></span>
+                    <span id="modal-author"></span>
+                </div>
+                <h2 id="modal-title"></h2>
+                <p id="modal-text" style="white-space: pre-line;"></p> </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container footer-center">
+            <h3>SMA Negeri 8 Tangerang Selatan</h3>
+            <p>Sistem Informasi Perpustakaan</p>
+        </div>
+    </footer>
+    
+    <script src="../assets/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const upcomingContainer = document.getElementById('upcoming-container');
+            const pastContainer = document.getElementById('past-container');
+            
+            // Ambil Hari Ini (Tanpa Jam)
+            const today = new Date();
+            today.setHours(0,0,0,0);
+
+            fetch('../backend/berita.php')
+                .then(res => res.json())
+                .then(data => {
+                    upcomingContainer.innerHTML = '';
+                    pastContainer.innerHTML = '';
+
+                    if (data.length > 0) {
+                        data.forEach(item => {
+                            const eventDate = new Date(item.tanggal);
+                            const imgPath = item.gambar ? `../backend/uploads/${item.gambar}` : `../assets/picture/1.jpg`;
+                            
+                            // Template Kartu Berita
+                            const cardHTML = `
+                                <div class="card">
+                                    <img src="${imgPath}" class="card-img-top">
+                                    <div class="card-content">
+                                        <div class="card-meta">
+                                            <span>📅 ${item.tanggal}</span>
+                                            <span>👤 ${item.penulis}</span>
+                                        </div>
+                                        <h3>${item.judul}</h3>
+                                        <p>${item.deskripsi}</p>
+                                        <a href="#" class="card-link open-modal-btn" 
+                                           data-img-src="${imgPath}"
+                                           data-title="${item.judul}"
+                                           data-date="${item.tanggal}"
+                                           data-author="${item.penulis}"
+                                           data-full-text="${item.isi_full}">
+                                           Baca Selengkapnya
+                                        </a>
+                                    </div>
+                                </div>
+                            `;
+
+                            // LOGIKA PEMISAH (OTOMATIS)
+                            // Jika tanggal berita >= hari ini, masuk Upcoming
+                            // Jika tanggal berita < hari ini, masuk Past
+                            if (eventDate >= today) {
+                                upcomingContainer.innerHTML += cardHTML;
+                            } else {
+                                pastContainer.innerHTML += cardHTML;
+                            }
+                        });
+
+                        // Pesan jika kosong
+                        if (upcomingContainer.innerHTML === '') upcomingContainer.innerHTML = '<p>Tidak ada acara mendatang.</p>';
+                        if (pastContainer.innerHTML === '') pastContainer.innerHTML = '<p>Belum ada arsip berita.</p>';
+
+                        // Re-attach event listener untuk modal (karena elemen baru dibuat via JS)
+                        attachModalEvents();
+
+                    } else {
+                        upcomingContainer.innerHTML = '<p>Belum ada berita.</p>';
+                        pastContainer.innerHTML = '';
+                    }
+                });
+        });
+
+        // Fungsi manual untuk mengaktifkan modal pada elemen yang baru dibuat JS
+        function attachModalEvents() {
+            const modalOverlay = document.getElementById('news-modal-overlay');
+            const btns = document.querySelectorAll('.open-modal-btn');
+            
+            btns.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.getElementById('modal-img').src = this.dataset.imgSrc;
+                    document.getElementById('modal-title').innerText = this.dataset.title;
+                    document.getElementById('modal-text').innerText = this.dataset.fullText;
+                    document.getElementById('modal-date').innerText = "📅 " + this.dataset.date;
+                    document.getElementById('modal-author').innerText = "👤 " + this.dataset.author;
+                    modalOverlay.classList.add('active');
+                });
+            });
+        }
+    </script>
+</body>
+</html>
